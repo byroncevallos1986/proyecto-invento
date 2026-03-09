@@ -17,6 +17,9 @@ const login = document.getElementById("login");
 const logout = document.getElementById("logout");
 const mensaje = document.getElementById("mensaje");
 
+/* NUEVO */
+const sidebar = document.getElementById("sidebar");
+
 
 login.onclick = async () => {
 
@@ -39,10 +42,16 @@ if (!querySnapshot.empty) {
 mensaje.innerHTML =
 "ACCESO PERMITIDO: " + email;
 
+/* MOSTRAR SIDEBAR */
+sidebar.style.display = "flex";
+
 } else {
 
 mensaje.innerHTML =
 "ACCESO DENEGADO";
+
+/* OCULTAR SIDEBAR */
+sidebar.style.display = "none";
 
 await signOut(auth);
 
@@ -56,5 +65,8 @@ logout.onclick = async () => {
 await signOut(auth);
 
 mensaje.innerHTML = "Sesión cerrada";
+
+/* OCULTAR SIDEBAR */
+sidebar.style.display = "none";
 
 };

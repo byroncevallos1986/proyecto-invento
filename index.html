@@ -1,23 +1,102 @@
 <!DOCTYPE html>
 <html>
+
 <head>
   <title>Proyecto Invento</title>
+
+  <style>
+
+    body{
+        margin:0;
+        font-family: Arial;
+        display:flex;
+    }
+
+    /* SIDEBAR */
+
+    #sidebar{
+        width:220px;
+        height:100vh;
+        background:#1e293b;
+        color:white;
+
+        /* IMPORTANTE:
+           Sidebar oculto por defecto.
+           Solo se mostrará después del login
+           desde app.js
+        */
+        display:none;
+
+        flex-direction:column;
+    }
+
+    #logo{
+        height:80px;
+        display:flex;
+        align-items:center;
+        justify-content:center;
+        border-bottom:1px solid #334155;
+        font-size:18px;
+    }
+
+    .menu{
+        padding:15px;
+        cursor:pointer;
+        display:flex;
+        align-items:center;
+        gap:10px;
+    }
+
+    .menu:hover{
+        background:#334155;
+    }
+
+    /* CONTENIDO */
+
+    #content{
+        flex:1;
+        padding:30px;
+    }
+
+  </style>
+
   <script type="module" src="app.js"></script>
+
 </head>
 
 <body>
 
-<h1>Proyecto Invento</h1>
+<!-- SIDEBAR -->
 
-<button id="login">
-Login con Google
-</button>
+<div id="sidebar">
 
-<button id="logout">
-Logout
-</button>
+    <div id="logo">
+        LOGO
+    </div>
 
-<div id="mensaje"></div>
+    <div class="menu" id="menuHome">
+        🏠 Home
+    </div>
+
+</div>
+
+<!-- CONTENIDO PRINCIPAL -->
+
+<div id="content">
+
+    <h1>Proyecto Invento</h1>
+
+    <button id="login">
+        Login con Google
+    </button>
+
+    <button id="logout">
+        Logout
+    </button>
+
+    <div id="mensaje"></div>
+
+</div>
 
 </body>
 </html>
