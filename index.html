@@ -33,12 +33,24 @@
     }
 
     #logo{
-        height:80px;
+        height:90px;
         display:flex;
+        flex-direction:column;
         align-items:center;
         justify-content:center;
         border-bottom:1px solid #334155;
-        font-size:18px;
+        gap:5px;
+    }
+
+    #userPhoto{
+        width:40px;
+        height:40px;
+        border-radius:50%;
+    }
+
+    #userEmail{
+        font-size:12px;
+        text-align:center;
     }
 
     .menu{
@@ -61,6 +73,10 @@
         padding:30px;
     }
 
+    .menu.active{
+        background:#475569;
+    }
+
   </style>
 
   <script type="module" src="app.js"></script>
@@ -76,7 +92,8 @@
     <div>
 
         <div id="logo">
-            LOGO
+            <img id="userPhoto">
+            <div id="userEmail"></div>
         </div>
 
         <div class="menu" id="menuHome">

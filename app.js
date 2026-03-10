@@ -19,6 +19,10 @@ const mensaje = document.getElementById("mensaje");
 
 /* NUEVO */
 const sidebar = document.getElementById("sidebar");
+
+const userPhoto = document.getElementById("userPhoto");
+const userEmail = document.getElementById("userEmail");
+
 const menuHome = document.getElementById("menuHome");
 const menuCategorias = document.getElementById("menuCategorias");
 const menuProductos = document.getElementById("menuProductos");
@@ -32,6 +36,9 @@ const user = result.user;
 
 const email = user.email;
 
+userPhoto.src = user.photoURL;
+userEmail.innerHTML = email;
+
 const q = query(
 collection(db, "whitelist"),
 where("email", "==", email),
@@ -39,6 +46,16 @@ where("enabled", "==", true)
 );
 
 const querySnapshot = await getDocs(q);
+
+function activarMenu(menu){
+
+document.querySelectorAll(".menu").forEach(m=>{
+m.classList.remove("active");
+});
+
+menu.classList.add("active");
+
+}
 
 if (!querySnapshot.empty) {
 
@@ -72,4 +89,20 @@ mensaje.innerHTML = "Sesión cerrada";
 /* OCULTAR SIDEBAR */
 sidebar.style.display = "none";
 
+};
+
+menuHome.onclick = () => {
+activarMenu(menuHome);
+};
+
+menuCategorias.onclick = () => {
+activarMenu(menuCategorias);
+};
+
+menuProductos.onclick = () => {
+activarMenu(menuProductos);
+};
+
+menuMovimientos.onclick = () => {
+activarMenu(menuMovimientos);
 };
