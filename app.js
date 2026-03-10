@@ -19,7 +19,10 @@ const mensaje = document.getElementById("mensaje");
 
 /* NUEVO */
 const sidebar = document.getElementById("sidebar");
-
+const menuHome = document.getElementById("menuHome");
+const menuCategorias = document.getElementById("menuCategorias");
+const menuProductos = document.getElementById("menuProductos");
+const menuMovimientos = document.getElementById("menuMovimientos");
 
 login.onclick = async () => {
 
