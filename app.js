@@ -14,7 +14,7 @@ getDocs
 
 
 const login = document.getElementById("login");
-const logout = document.getElementById("logout");
+const menuLogout = document.getElementById("menuLogout");
 const mensaje = document.getElementById("mensaje");
 
 /* NUEVO */
@@ -63,7 +63,7 @@ await signOut(auth);
 };
 
 
-logout.onclick = async () => {
+menuLogout.onclick = async () => {
 
 await signOut(auth);
 

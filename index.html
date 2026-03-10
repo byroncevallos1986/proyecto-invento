@@ -28,6 +28,8 @@
         display:none;
 
         flex-direction:column;
+
+        justify-content:space-between;
     }
 
     #logo{
@@ -71,24 +73,36 @@
 
 <div id="sidebar">
 
-    <div id="logo">
-        LOGO
+    <div>
+
+        <div id="logo">
+            LOGO
+        </div>
+
+        <div class="menu" id="menuHome">
+            🏠 Home
+        </div>
+
+        <div class="menu" id="menuCategorias">
+            🗂️ Categorías
+        </div>
+
+        <div class="menu" id="menuProductos">
+            📦 Productos
+        </div>
+
+        <div class="menu" id="menuMovimientos">
+            🔄 Movimientos
+        </div>
+
     </div>
 
-    <div class="menu" id="menuHome">
-        🏠 Home
-    </div>
+    <div>
 
-    <div class="menu" id="menuCategorias">
-        🗂️ Categorías
-    </div>
+        <div class="menu" id="menuLogout">
+            🚪 Logout
+        </div>
 
-    <div class="menu" id="menuProductos">
-        📦 Productos
-    </div>
-
-    <div class="menu" id="menuMovimientos">
-        🔄 Movimientos
     </div>
 
 </div>
@@ -101,10 +115,6 @@
 
     <button id="login">
         Login con Google
-    </button>
-
-    <button id="logout">
-        Logout
     </button>
 
     <div id="mensaje"></div>
