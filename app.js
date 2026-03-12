@@ -16,6 +16,7 @@ getDocs
 const login = document.getElementById("login");
 const menuLogout = document.getElementById("menuLogout");
 const mensaje = document.getElementById("mensaje");
+const tituloPagina = document.getElementById("tituloPagina");
 
 /* NUEVO */
 const sidebar = document.getElementById("sidebar");
@@ -23,7 +24,7 @@ const sidebar = document.getElementById("sidebar");
 const userPhoto = document.getElementById("userPhoto");
 const userEmail = document.getElementById("userEmail");
 
-const menuHome = document.getElementById("menuHome");
+const menuDashboard = document.getElementById("menuDashboard");
 const menuCategorias = document.getElementById("menuCategorias");
 const menuProductos = document.getElementById("menuProductos");
 const menuMovimientos = document.getElementById("menuMovimientos");
@@ -55,12 +56,20 @@ m.classList.remove("active");
 
 menu.classList.add("active");
 
+/* mostrar nombre en panel central */
+tituloPagina.innerHTML = nombre;
+
 }
 
 if (!querySnapshot.empty) {
 
 mensaje.innerHTML =
 "ACCESO PERMITIDO: " + email;
+
+/* limpiar pantalla principal */
+login.style.display = "none";
+mensaje.innerHTML = "";
+tituloPagina.innerHTML = "Dashboard";
 
 /* MOSTRAR SIDEBAR */
 sidebar.style.display = "flex";
@@ -91,18 +100,18 @@ sidebar.style.display = "none";
 
 };
 
-menuHome.onclick = () => {
-activarMenu(menuHome);
+menuDashboard.onclick = () => {
+activarMenu(menuDashboard,"Dashboard");
 };
 
 menuCategorias.onclick = () => {
-activarMenu(menuCategorias);
+activarMenu(menuCategorias,"Categorías");
 };
 
 menuProductos.onclick = () => {
-activarMenu(menuProductos);
+activarMenu(menuProductos,"Productos");
 };
 
 menuMovimientos.onclick = () => {
-activarMenu(menuMovimientos);
+activarMenu(menuMovimientos,"Movimientos");
 };
