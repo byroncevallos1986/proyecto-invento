@@ -3,28 +3,42 @@
 
 <head>
 
+<!-- TÍTULO DE LA PÁGINA -->
 <title>INVENTO</title>
 
+<!-- ICONO DEL SITIO -->
 <link rel="icon" href="favicon.ico">
 
 <style>
 
+/* =========================
+CONFIGURACIÓN GENERAL
+========================= */
+
 body{
 margin:0;
 font-family:Arial;
+
+/* flex permite que el contenido se adapte */
 display:flex;
 }
 
 /* =========================
-TOPBAR
+BARRA SUPERIOR (TOPBAR)
+Se muestra SOLO luego del login
 ========================= */
 
 #topbar{
+
 height:60px;
 width:100%;
+
+/* color estilo github */
 background:#1e293b;
+
 color:white;
 
+/* inicialmente oculta */
 display:none;
 
 align-items:center;
@@ -39,19 +53,29 @@ left:0;
 z-index:1000;
 }
 
+/* botón hamburguesa */
+
 #menuToggle{
 font-size:26px;
 cursor:pointer;
 }
 
-/* USER INFO */
+/* =========================
+INFORMACIÓN DEL USUARIO
+========================= */
 
 #userInfoTop{
+
 display:flex;
 align-items:center;
 gap:10px;
+
+/* evita que el email empuje la barra */
 max-width:50%;
+
 }
+
+/* foto del usuario */
 
 #userPhotoTop{
 width:35px;
@@ -59,16 +83,27 @@ height:35px;
 border-radius:50%;
 }
 
+/* email del usuario */
+
 #userEmailTop{
+
 font-size:13px;
+
+/* evita saltos de línea */
 white-space:nowrap;
+
+/* oculta texto sobrante */
 overflow:hidden;
+
+/* coloca ... si el email es muy largo */
 text-overflow:ellipsis;
+
 max-width:250px;
 }
 
 /* =========================
 OVERLAY
+Fondo oscuro al abrir el menú
 ========================= */
 
 #overlay{
@@ -80,6 +115,7 @@ left:0;
 width:100%;
 height:100%;
 
+/* fondo semitransparente */
 background:rgba(0,0,0,0.4);
 
 opacity:0;
@@ -97,24 +133,30 @@ visibility:visible;
 }
 
 /* =========================
-SIDEBAR
+BARRA LATERAL (SIDEBAR)
 ========================= */
 
 #sidebar{
 
 width:220px;
+
+/* alto completo menos la topbar */
 height:calc(100vh - 60px);
 
 background:#1e293b;
+
 color:white;
 
 position:fixed;
 
+/* oculto por defecto */
 left:-220px;
+
 top:60px;
 
 transition:0.3s;
 
+/* menú en columna */
 display:flex;
 flex-direction:column;
 
@@ -122,12 +164,20 @@ z-index:1001;
 
 }
 
+/* cuando se abre */
+
 #sidebar.active{
 left:0;
 }
 
+/* =========================
+ITEMS DEL MENÚ
+========================= */
+
 .menu{
+
 padding:15px;
+
 cursor:pointer;
 
 display:flex;
@@ -136,50 +186,57 @@ align-items:center;
 gap:10px;
 
 font-size:16px;
+
 }
+
+/* efecto hover */
 
 .menu:hover{
 background:#334155;
 }
+
+/* menú seleccionado */
 
 .menu.active{
 background:#475569;
 }
 
 /* =========================
-LOGOUT
-========================= */
-
-#menuLogout{
-margin-top:auto;
-border-top:1px solid #334155;
-}
-
-/* =========================
-CONTENIDO
+CONTENIDO PRINCIPAL
 ========================= */
 
 #content{
+
 flex:1;
+
+/* espacio para topbar */
 padding:80px 30px 30px 30px;
+
 width:100%;
 }
 
 </style>
 
+<!-- ARCHIVO JAVASCRIPT PRINCIPAL -->
 <script type="module" src="app.js"></script>
 
 </head>
 
 <body>
 
-<!-- TOPBAR -->
+<!-- =========================
+BARRA SUPERIOR
+========================= -->
 
 <div id="topbar">
+
+<!-- BOTÓN ABRIR MENÚ -->
 
 <div id="menuToggle">
 ☰
 </div>
+
+<!-- INFORMACIÓN USUARIO -->
 
 <div id="userInfoTop">
 
@@ -191,29 +248,49 @@ width:100%;
 
 </div>
 
-<!-- OVERLAY -->
+<!-- =========================
+OVERLAY OSCURO
+========================= -->
 
 <div id="overlay"></div>
 
-<!-- SIDEBAR -->
+<!-- =========================
+BARRA LATERAL
+========================= -->
 
 <div id="sidebar">
+
+<!-- DASHBOARD -->
 
 <div class="menu" id="menuDashboard">
 📊 Dashboard
 </div>
 
+<!-- NUEVO MENÚ ADMINISTRACIÓN -->
+
+<div class="menu" id="menuAdministracion">
+⚙️ Administración
+</div>
+
+<!-- CATEGORÍAS -->
+
 <div class="menu" id="menuCategorias">
 🗂️ Categorías
 </div>
+
+<!-- PRODUCTOS -->
 
 <div class="menu" id="menuProductos">
 📦 Productos
 </div>
 
+<!-- MOVIMIENTOS -->
+
 <div class="menu" id="menuMovimientos">
 🔄 Movimientos
 </div>
+
+<!-- LOGOUT (movido debajo de movimientos) -->
 
 <div class="menu" id="menuLogout">
 🚪 Logout
@@ -221,7 +298,9 @@ width:100%;
 
 </div>
 
-<!-- CONTENIDO -->
+<!-- =========================
+CONTENIDO PRINCIPAL
+========================= -->
 
 <div id="content">
 

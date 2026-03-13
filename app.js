@@ -1,9 +1,21 @@
+/* =====================================================
+IMPORTACIÓN DE CONFIGURACIÓN FIREBASE
+===================================================== */
+
 import { auth, provider, db } from "./firebase.js";
+
+/* =====================================================
+IMPORTACIÓN DE MÉTODOS DE AUTENTICACIÓN
+===================================================== */
 
 import {
 signInWithPopup,
 signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+
+/* =====================================================
+IMPORTACIÓN DE FIRESTORE
+===================================================== */
 
 import {
 collection,
@@ -12,7 +24,9 @@ where,
 getDocs
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* ELEMENTOS */
+/* =====================================================
+ELEMENTOS HTML
+===================================================== */
 
 const login = document.getElementById("login");
 const mensaje = document.getElementById("mensaje");
@@ -27,17 +41,22 @@ const overlay = document.getElementById("overlay");
 const userPhotoTop = document.getElementById("userPhotoTop");
 const userEmailTop = document.getElementById("userEmailTop");
 
-/* MENUS */
+/* =====================================================
+MENÚS DEL SIDEBAR
+===================================================== */
 
 const menuDashboard = document.getElementById("menuDashboard");
+const menuAdministracion = document.getElementById("menuAdministracion");
 const menuCategorias = document.getElementById("menuCategorias");
 const menuProductos = document.getElementById("menuProductos");
 const menuMovimientos = document.getElementById("menuMovimientos");
 const menuLogout = document.getElementById("menuLogout");
 
-/* ================================
-SIDEBAR
-================================ */
+/* =====================================================
+FUNCIONES SIDEBAR
+===================================================== */
+
+/* abre el menú lateral */
 
 function abrirSidebar(){
 
@@ -46,12 +65,16 @@ overlay.classList.add("active");
 
 }
 
+/* cierra el menú lateral */
+
 function cerrarSidebar(){
 
 sidebar.classList.remove("active");
 overlay.classList.remove("active");
 
 }
+
+/* botón hamburguesa */
 
 menuToggle.onclick=()=>{
 
@@ -63,37 +86,49 @@ abrirSidebar();
 
 };
 
+/* clic en overlay */
+
 overlay.onclick=()=>{
 
 cerrarSidebar();
 
 };
 
-/* ================================
-ACTIVAR MENUS
-================================ */
+/* =====================================================
+ACTIVAR MENÚ
+===================================================== */
 
 function activarMenu(menu,nombre){
+
+/* remover selección de todos */
 
 document.querySelectorAll(".menu").forEach(m=>{
 m.classList.remove("active");
 });
 
+/* activar menú seleccionado */
+
 menu.classList.add("active");
 
+/* cambiar título de página */
+
 tituloPagina.innerHTML=nombre;
+
+/* cerrar sidebar */
 
 cerrarSidebar();
 
 }
 
-/* ================================
-LOGIN
-================================ */
+/* =====================================================
+LOGIN CON GOOGLE
+===================================================== */
 
 login.onclick = async () => {
 
 try{
+
+/* abrir login google */
 
 const result = await signInWithPopup(auth, provider);
 
@@ -101,7 +136,9 @@ const user = result.user;
 
 const email = user.email;
 
-/* validar whitelist */
+/* =====================================================
+VALIDACIÓN WHITELIST
+===================================================== */
 
 const q=query(
 collection(db,"whitelist"),
@@ -111,9 +148,11 @@ where("enabled","==",true)
 
 const querySnapshot = await getDocs(q);
 
+/* si usuario está autorizado */
+
 if(!querySnapshot.empty){
 
-/* ocultar login */
+/* ocultar botón login */
 
 login.style.display="none";
 
@@ -121,16 +160,16 @@ login.style.display="none";
 
 topbar.style.display="flex";
 
-/* dashboard */
+/* mostrar dashboard */
 
 tituloPagina.innerHTML="Dashboard";
 
-/* datos usuario */
+/* mostrar datos usuario */
 
 userPhotoTop.src=user.photoURL;
 userEmailTop.innerText=email;
 
-/* activar menu dashboard */
+/* activar menú dashboard */
 
 activarMenu(menuDashboard,"Dashboard");
 
@@ -143,6 +182,8 @@ await signOut(auth);
 }
 
 }catch(error){
+
+/* si usuario cancela login */
 
 if(error.code==="auth/popup-closed-by-user"){
 
@@ -158,15 +199,17 @@ mensaje.innerHTML="Error login: "+error.message;
 
 };
 
-/* ================================
+/* =====================================================
 LOGOUT
-================================ */
+===================================================== */
 
 menuLogout.onclick=async()=>{
 
+/* cerrar sesión */
+
 await signOut(auth);
 
-/* ocultar barra */
+/* ocultar barra superior */
 
 topbar.style.display="none";
 
@@ -174,7 +217,7 @@ topbar.style.display="none";
 
 login.style.display="block";
 
-/* reset titulo */
+/* reset título */
 
 tituloPagina.innerHTML="INVENTO";
 
@@ -186,12 +229,12 @@ mensaje.innerHTML="Sesión cerrada";
 
 cerrarSidebar();
 
-/* limpiar usuario */
+/* limpiar datos usuario */
 
 userPhotoTop.src="";
 userEmailTop.innerHTML="";
 
-/* desactivar menus */
+/* desactivar todos los menús */
 
 document.querySelectorAll(".menu").forEach(m=>{
 m.classList.remove("active");
@@ -199,12 +242,16 @@ m.classList.remove("active");
 
 };
 
-/* ================================
-MENUS
-================================ */
+/* =====================================================
+EVENTOS MENÚS
+===================================================== */
 
 menuDashboard.onclick=()=>{
 activarMenu(menuDashboard,"Dashboard");
+};
+
+menuAdministracion.onclick=()=>{
+activarMenu(menuAdministracion,"Administración");
 };
 
 menuCategorias.onclick=()=>{
