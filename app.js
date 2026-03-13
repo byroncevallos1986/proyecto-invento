@@ -18,16 +18,11 @@ const login = document.getElementById("login");
 const mensaje = document.getElementById("mensaje");
 const tituloPagina = document.getElementById("tituloPagina");
 
-/* SIDEBAR */
+const topbar = document.getElementById("topbar");
 
 const sidebar = document.getElementById("sidebar");
 const menuToggle = document.getElementById("menuToggle");
 const overlay = document.getElementById("overlay");
-
-/* USER */
-
-const userPhoto = document.getElementById("userPhoto");
-const userEmail = document.getElementById("userEmail");
 
 const userPhotoTop = document.getElementById("userPhotoTop");
 const userEmailTop = document.getElementById("userEmailTop");
@@ -40,9 +35,9 @@ const menuProductos = document.getElementById("menuProductos");
 const menuMovimientos = document.getElementById("menuMovimientos");
 const menuLogout = document.getElementById("menuLogout");
 
-/* =======================================================
-FUNCIONES SIDEBAR
-======================================================= */
+/* ================================
+SIDEBAR
+================================ */
 
 function abrirSidebar(){
 
@@ -58,9 +53,7 @@ overlay.classList.remove("active");
 
 }
 
-/* TOGGLE */
-
-menuToggle.onclick = () => {
+menuToggle.onclick=()=>{
 
 if(sidebar.classList.contains("active")){
 cerrarSidebar();
@@ -70,17 +63,15 @@ abrirSidebar();
 
 };
 
-/* CERRAR AL HACER CLICK FUERA */
-
-overlay.onclick = () => {
+overlay.onclick=()=>{
 
 cerrarSidebar();
 
 };
 
-/* =======================================================
+/* ================================
 ACTIVAR MENUS
-======================================================= */
+================================ */
 
 function activarMenu(menu,nombre){
 
@@ -90,15 +81,15 @@ m.classList.remove("active");
 
 menu.classList.add("active");
 
-tituloPagina.innerHTML = nombre;
+tituloPagina.innerHTML=nombre;
 
 cerrarSidebar();
 
 }
 
-/* =======================================================
-LOGIN GOOGLE
-======================================================= */
+/* ================================
+LOGIN
+================================ */
 
 login.onclick = async () => {
 
@@ -110,17 +101,9 @@ const user = result.user;
 
 const email = user.email;
 
-/* mostrar datos usuario */
-
-userPhoto.src = user.photoURL;
-userEmail.innerHTML = email;
-
-userPhotoTop.src = user.photoURL;
-userEmailTop.innerHTML = email;
-
 /* validar whitelist */
 
-const q = query(
+const q=query(
 collection(db,"whitelist"),
 where("email","==",email),
 where("enabled","==",true)
@@ -132,7 +115,12 @@ if(!querySnapshot.empty){
 
 login.style.display="none";
 
+topbar.style.display="flex";
+
 tituloPagina.innerHTML="Dashboard";
+
+userPhotoTop.src=user.photoURL;
+userEmailTop.innerHTML=email;
 
 }else{
 
@@ -144,19 +132,29 @@ await signOut(auth);
 
 }catch(error){
 
+if(error.code==="auth/popup-closed-by-user"){
+
+mensaje.innerHTML="Login cancelado";
+
+}else{
+
 mensaje.innerHTML="Error login: "+error.message;
+
+}
 
 }
 
 };
 
-/* =======================================================
+/* ================================
 LOGOUT
-======================================================= */
+================================ */
 
-menuLogout.onclick = async () => {
+menuLogout.onclick=async()=>{
 
 await signOut(auth);
+
+topbar.style.display="none";
 
 login.style.display="block";
 
@@ -166,19 +164,14 @@ mensaje.innerHTML="Sesión cerrada";
 
 cerrarSidebar();
 
-/* limpiar datos usuario */
-
-userPhoto.src="";
-userEmail.innerHTML="";
-
 userPhotoTop.src="";
 userEmailTop.innerHTML="";
 
 };
 
-/* =======================================================
-EVENTOS MENUS
-======================================================= */
+/* ================================
+MENUS
+================================ */
 
 menuDashboard.onclick=()=>{
 activarMenu(menuDashboard,"Dashboard");
