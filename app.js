@@ -113,14 +113,26 @@ const querySnapshot = await getDocs(q);
 
 if(!querySnapshot.empty){
 
+/* ocultar login */
+
 login.style.display="none";
+
+/* mostrar topbar */
 
 topbar.style.display="flex";
 
+/* dashboard */
+
 tituloPagina.innerHTML="Dashboard";
 
+/* datos usuario */
+
 userPhotoTop.src=user.photoURL;
-userEmailTop.innerHTML=email;
+userEmailTop.innerText=email;
+
+/* activar menu dashboard */
+
+activarMenu(menuDashboard,"Dashboard");
 
 }else{
 
@@ -154,18 +166,36 @@ menuLogout.onclick=async()=>{
 
 await signOut(auth);
 
+/* ocultar barra */
+
 topbar.style.display="none";
+
+/* mostrar login */
 
 login.style.display="block";
 
+/* reset titulo */
+
 tituloPagina.innerHTML="INVENTO";
+
+/* mensaje */
 
 mensaje.innerHTML="Sesión cerrada";
 
+/* cerrar sidebar */
+
 cerrarSidebar();
+
+/* limpiar usuario */
 
 userPhotoTop.src="";
 userEmailTop.innerHTML="";
+
+/* desactivar menus */
+
+document.querySelectorAll(".menu").forEach(m=>{
+m.classList.remove("active");
+});
 
 };
 
