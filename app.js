@@ -5,17 +5,13 @@ IMPORTACIÓN DE CONFIGURACIÓN FIREBASE
 import { auth, provider, db } from "./firebase.js";
 
 /* =====================================================
-IMPORTACIÓN DE MÉTODOS DE AUTENTICACIÓN
+IMPORTACIÓN DE MÉTODOS FIREBASE
 ===================================================== */
 
 import {
 signInWithPopup,
 signOut
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-
-/* =====================================================
-IMPORTACIÓN DE FIRESTORE
-===================================================== */
 
 import {
 collection,
@@ -42,11 +38,16 @@ const userPhotoTop = document.getElementById("userPhotoTop");
 const userEmailTop = document.getElementById("userEmailTop");
 
 /* =====================================================
-MENÚS DEL SIDEBAR
+MENÚS
 ===================================================== */
 
 const menuDashboard = document.getElementById("menuDashboard");
 const menuAdministracion = document.getElementById("menuAdministracion");
+const submenuAdministracion = document.getElementById("submenuAdministracion");
+
+const menuNuevoUsuario = document.getElementById("menuNuevoUsuario");
+const menuActualizarUsuario = document.getElementById("menuActualizarUsuario");
+
 const menuCategorias = document.getElementById("menuCategorias");
 const menuProductos = document.getElementById("menuProductos");
 const menuMovimientos = document.getElementById("menuMovimientos");
@@ -56,25 +57,15 @@ const menuLogout = document.getElementById("menuLogout");
 FUNCIONES SIDEBAR
 ===================================================== */
 
-/* abre el menú lateral */
-
 function abrirSidebar(){
-
 sidebar.classList.add("active");
 overlay.classList.add("active");
-
 }
-
-/* cierra el menú lateral */
 
 function cerrarSidebar(){
-
 sidebar.classList.remove("active");
 overlay.classList.remove("active");
-
 }
-
-/* botón hamburguesa */
 
 menuToggle.onclick=()=>{
 
@@ -86,13 +77,7 @@ abrirSidebar();
 
 };
 
-/* clic en overlay */
-
-overlay.onclick=()=>{
-
-cerrarSidebar();
-
-};
+overlay.onclick=()=>{ cerrarSidebar(); };
 
 /* =====================================================
 ACTIVAR MENÚ
@@ -100,35 +85,59 @@ ACTIVAR MENÚ
 
 function activarMenu(menu,nombre){
 
-/* remover selección de todos */
-
 document.querySelectorAll(".menu").forEach(m=>{
 m.classList.remove("active");
 });
 
-/* activar menú seleccionado */
-
 menu.classList.add("active");
 
-/* cambiar título de página */
-
 tituloPagina.innerHTML=nombre;
-
-/* cerrar sidebar */
 
 cerrarSidebar();
 
 }
 
 /* =====================================================
-LOGIN CON GOOGLE
+ABRIR SUBMENÚ ADMINISTRACIÓN
+===================================================== */
+
+menuAdministracion.onclick=()=>{
+
+submenuAdministracion.classList.toggle("active");
+
+};
+
+/* =====================================================
+SUBMENÚ NUEVO USUARIO
+===================================================== */
+
+menuNuevoUsuario.onclick=()=>{
+
+tituloPagina.innerHTML="Nuevo Usuario";
+
+cerrarSidebar();
+
+};
+
+/* =====================================================
+SUBMENÚ ACTUALIZAR USUARIO
+===================================================== */
+
+menuActualizarUsuario.onclick=()=>{
+
+tituloPagina.innerHTML="Actualizar Usuario";
+
+cerrarSidebar();
+
+};
+
+/* =====================================================
+LOGIN GOOGLE
 ===================================================== */
 
 login.onclick = async () => {
 
 try{
-
-/* abrir login google */
 
 const result = await signInWithPopup(auth, provider);
 
@@ -136,9 +145,7 @@ const user = result.user;
 
 const email = user.email;
 
-/* =====================================================
-VALIDACIÓN WHITELIST
-===================================================== */
+/* VALIDACIÓN WHITELIST */
 
 const q=query(
 collection(db,"whitelist"),
@@ -148,28 +155,16 @@ where("enabled","==",true)
 
 const querySnapshot = await getDocs(q);
 
-/* si usuario está autorizado */
-
 if(!querySnapshot.empty){
-
-/* ocultar botón login */
 
 login.style.display="none";
 
-/* mostrar topbar */
-
 topbar.style.display="flex";
-
-/* mostrar dashboard */
 
 tituloPagina.innerHTML="Dashboard";
 
-/* mostrar datos usuario */
-
 userPhotoTop.src=user.photoURL;
 userEmailTop.innerText=email;
-
-/* activar menú dashboard */
 
 activarMenu(menuDashboard,"Dashboard");
 
@@ -182,8 +177,6 @@ await signOut(auth);
 }
 
 }catch(error){
-
-/* si usuario cancela login */
 
 if(error.code==="auth/popup-closed-by-user"){
 
@@ -205,36 +198,20 @@ LOGOUT
 
 menuLogout.onclick=async()=>{
 
-/* cerrar sesión */
-
 await signOut(auth);
-
-/* ocultar barra superior */
 
 topbar.style.display="none";
 
-/* mostrar login */
-
 login.style.display="block";
-
-/* reset título */
 
 tituloPagina.innerHTML="INVENTO";
 
-/* mensaje */
-
 mensaje.innerHTML="Sesión cerrada";
-
-/* cerrar sidebar */
 
 cerrarSidebar();
 
-/* limpiar datos usuario */
-
 userPhotoTop.src="";
 userEmailTop.innerHTML="";
-
-/* desactivar todos los menús */
 
 document.querySelectorAll(".menu").forEach(m=>{
 m.classList.remove("active");
@@ -248,10 +225,6 @@ EVENTOS MENÚS
 
 menuDashboard.onclick=()=>{
 activarMenu(menuDashboard,"Dashboard");
-};
-
-menuAdministracion.onclick=()=>{
-activarMenu(menuAdministracion,"Administración");
 };
 
 menuCategorias.onclick=()=>{

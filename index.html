@@ -3,42 +3,42 @@
 
 <head>
 
-<!-- TÍTULO DE LA PÁGINA -->
+<!-- =====================================================
+TÍTULO DE LA PÁGINA
+===================================================== -->
+
 <title>INVENTO</title>
 
-<!-- ICONO DEL SITIO -->
+<!-- =====================================================
+ICONO DEL SITIO
+===================================================== -->
+
 <link rel="icon" href="favicon.ico">
 
 <style>
 
-/* =========================
+/* =====================================================
 CONFIGURACIÓN GENERAL
-========================= */
+===================================================== */
 
 body{
 margin:0;
 font-family:Arial;
-
-/* flex permite que el contenido se adapte */
 display:flex;
 }
 
-/* =========================
-BARRA SUPERIOR (TOPBAR)
-Se muestra SOLO luego del login
-========================= */
+/* =====================================================
+BARRA SUPERIOR
+===================================================== */
 
 #topbar{
 
 height:60px;
 width:100%;
 
-/* color estilo github */
 background:#1e293b;
-
 color:white;
 
-/* inicialmente oculta */
 display:none;
 
 align-items:center;
@@ -60,22 +60,18 @@ font-size:26px;
 cursor:pointer;
 }
 
-/* =========================
-INFORMACIÓN DEL USUARIO
-========================= */
+/* =====================================================
+INFORMACIÓN USUARIO
+===================================================== */
 
 #userInfoTop{
-
 display:flex;
 align-items:center;
 gap:10px;
-
-/* evita que el email empuje la barra */
 max-width:50%;
-
 }
 
-/* foto del usuario */
+/* foto */
 
 #userPhotoTop{
 width:35px;
@@ -83,28 +79,23 @@ height:35px;
 border-radius:50%;
 }
 
-/* email del usuario */
+/* email */
 
 #userEmailTop{
 
 font-size:13px;
 
-/* evita saltos de línea */
 white-space:nowrap;
-
-/* oculta texto sobrante */
 overflow:hidden;
-
-/* coloca ... si el email es muy largo */
 text-overflow:ellipsis;
 
 max-width:250px;
+
 }
 
-/* =========================
+/* =====================================================
 OVERLAY
-Fondo oscuro al abrir el menú
-========================= */
+===================================================== */
 
 #overlay{
 
@@ -115,7 +106,6 @@ left:0;
 width:100%;
 height:100%;
 
-/* fondo semitransparente */
 background:rgba(0,0,0,0.4);
 
 opacity:0;
@@ -132,31 +122,27 @@ opacity:1;
 visibility:visible;
 }
 
-/* =========================
-BARRA LATERAL (SIDEBAR)
-========================= */
+/* =====================================================
+SIDEBAR
+===================================================== */
 
 #sidebar{
 
 width:220px;
 
-/* alto completo menos la topbar */
 height:calc(100vh - 60px);
 
 background:#1e293b;
-
 color:white;
 
 position:fixed;
 
-/* oculto por defecto */
 left:-220px;
 
 top:60px;
 
 transition:0.3s;
 
-/* menú en columna */
 display:flex;
 flex-direction:column;
 
@@ -164,15 +150,13 @@ z-index:1001;
 
 }
 
-/* cuando se abre */
-
 #sidebar.active{
 left:0;
 }
 
-/* =========================
-ITEMS DEL MENÚ
-========================= */
+/* =====================================================
+MENÚ PRINCIPAL
+===================================================== */
 
 .menu{
 
@@ -189,54 +173,80 @@ font-size:16px;
 
 }
 
-/* efecto hover */
-
 .menu:hover{
 background:#334155;
 }
-
-/* menú seleccionado */
 
 .menu.active{
 background:#475569;
 }
 
-/* =========================
-CONTENIDO PRINCIPAL
-========================= */
+/* =====================================================
+SUBMENÚ
+===================================================== */
+
+.submenu{
+
+display:none;
+flex-direction:column;
+
+background:#334155;
+
+}
+
+/* submenú visible */
+
+.submenu.active{
+display:flex;
+}
+
+/* item submenú */
+
+.submenu-item{
+
+padding:12px 15px 12px 40px;
+
+cursor:pointer;
+
+font-size:14px;
+
+}
+
+.submenu-item:hover{
+background:#475569;
+}
+
+/* =====================================================
+CONTENIDO
+===================================================== */
 
 #content{
 
 flex:1;
 
-/* espacio para topbar */
 padding:80px 30px 30px 30px;
 
 width:100%;
+
 }
 
 </style>
 
-<!-- ARCHIVO JAVASCRIPT PRINCIPAL -->
 <script type="module" src="app.js"></script>
 
 </head>
 
 <body>
 
-<!-- =========================
-BARRA SUPERIOR
-========================= -->
+<!-- =====================================================
+TOPBAR
+===================================================== -->
 
 <div id="topbar">
-
-<!-- BOTÓN ABRIR MENÚ -->
 
 <div id="menuToggle">
 ☰
 </div>
-
-<!-- INFORMACIÓN USUARIO -->
 
 <div id="userInfoTop">
 
@@ -248,15 +258,15 @@ BARRA SUPERIOR
 
 </div>
 
-<!-- =========================
-OVERLAY OSCURO
-========================= -->
+<!-- =====================================================
+OVERLAY
+===================================================== -->
 
 <div id="overlay"></div>
 
-<!-- =========================
-BARRA LATERAL
-========================= -->
+<!-- =====================================================
+SIDEBAR
+===================================================== -->
 
 <div id="sidebar">
 
@@ -266,10 +276,24 @@ BARRA LATERAL
 📊 Dashboard
 </div>
 
-<!-- NUEVO MENÚ ADMINISTRACIÓN -->
+<!-- ADMINISTRACIÓN -->
 
 <div class="menu" id="menuAdministracion">
 ⚙️ Administración
+</div>
+
+<!-- SUBMENÚ ADMINISTRACIÓN -->
+
+<div class="submenu" id="submenuAdministracion">
+
+<div class="submenu-item" id="menuNuevoUsuario">
+👤 Nuevo Usuario
+</div>
+
+<div class="submenu-item" id="menuActualizarUsuario">
+✏️ Actualizar Usuario
+</div>
+
 </div>
 
 <!-- CATEGORÍAS -->
@@ -290,7 +314,7 @@ BARRA LATERAL
 🔄 Movimientos
 </div>
 
-<!-- LOGOUT (movido debajo de movimientos) -->
+<!-- LOGOUT -->
 
 <div class="menu" id="menuLogout">
 🚪 Logout
@@ -298,9 +322,9 @@ BARRA LATERAL
 
 </div>
 
-<!-- =========================
-CONTENIDO PRINCIPAL
-========================= -->
+<!-- =====================================================
+CONTENIDO
+===================================================== -->
 
 <div id="content">
 
