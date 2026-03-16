@@ -194,13 +194,9 @@ background:#334155;
 
 }
 
-/* submenú visible */
-
 .submenu.active{
 display:flex;
 }
-
-/* item submenú */
 
 .submenu-item{
 
@@ -227,6 +223,31 @@ flex:1;
 padding:80px 30px 30px 30px;
 
 width:100%;
+
+}
+
+/* =====================================================
+FORMULARIO NUEVO USUARIO
+===================================================== */
+
+#formNuevoUsuario{
+
+display:none;
+max-width:500px;
+margin-top:40px;
+
+}
+
+.campoFormulario{
+
+margin-bottom:15px;
+
+}
+
+.campoFormulario input{
+
+width:100%;
+padding:8px;
 
 }
 
@@ -323,12 +344,52 @@ SIDEBAR
 </div>
 
 <!-- =====================================================
-CONTENIDO
+CONTENIDO PRINCIPAL
 ===================================================== -->
 
 <div id="content">
 
 <h1 id="tituloPagina">INVENTO</h1>
+
+<!-- =====================================================
+FORMULARIO NUEVO USUARIO
+===================================================== -->
+
+<div id="formNuevoUsuario">
+
+<div class="campoFormulario">
+
+<label>Nombres:</label>
+
+<input type="text">
+
+</div>
+
+<div class="campoFormulario">
+
+<label>Apellidos:</label>
+
+<input type="text">
+
+</div>
+
+<div class="campoFormulario">
+
+<label>Email:</label>
+
+<input type="email">
+
+</div>
+
+<button>
+
+Ingresar
+
+</button>
+
+</div>
+
+<!-- LOGIN -->
 
 <button id="login">
 Login con Google

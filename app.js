@@ -38,6 +38,12 @@ const userPhotoTop = document.getElementById("userPhotoTop");
 const userEmailTop = document.getElementById("userEmailTop");
 
 /* =====================================================
+FORMULARIO NUEVO USUARIO
+===================================================== */
+
+const formNuevoUsuario = document.getElementById("formNuevoUsuario");
+
+/* =====================================================
 MENÚS
 ===================================================== */
 
@@ -58,13 +64,17 @@ FUNCIONES SIDEBAR
 ===================================================== */
 
 function abrirSidebar(){
+
 sidebar.classList.add("active");
 overlay.classList.add("active");
+
 }
 
 function cerrarSidebar(){
+
 sidebar.classList.remove("active");
 overlay.classList.remove("active");
+
 }
 
 menuToggle.onclick=()=>{
@@ -93,6 +103,10 @@ menu.classList.add("active");
 
 tituloPagina.innerHTML=nombre;
 
+/* ocultar formulario nuevo usuario */
+
+formNuevoUsuario.style.display="none";
+
 cerrarSidebar();
 
 }
@@ -115,6 +129,10 @@ menuNuevoUsuario.onclick=()=>{
 
 tituloPagina.innerHTML="Nuevo Usuario";
 
+/* mostrar formulario */
+
+formNuevoUsuario.style.display="block";
+
 cerrarSidebar();
 
 };
@@ -126,6 +144,8 @@ SUBMENÚ ACTUALIZAR USUARIO
 menuActualizarUsuario.onclick=()=>{
 
 tituloPagina.innerHTML="Actualizar Usuario";
+
+formNuevoUsuario.style.display="none";
 
 cerrarSidebar();
 
@@ -224,17 +244,25 @@ EVENTOS MENÚS
 ===================================================== */
 
 menuDashboard.onclick=()=>{
+
 activarMenu(menuDashboard,"Dashboard");
+
 };
 
 menuCategorias.onclick=()=>{
+
 activarMenu(menuCategorias,"Categorías");
+
 };
 
 menuProductos.onclick=()=>{
+
 activarMenu(menuProductos,"Productos");
+
 };
 
 menuMovimientos.onclick=()=>{
+
 activarMenu(menuMovimientos,"Movimientos");
+
 };
