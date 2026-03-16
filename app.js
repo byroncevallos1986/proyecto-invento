@@ -1,12 +1,4 @@
-/* =====================================================
-IMPORTACIÓN DE CONFIGURACIÓN FIREBASE
-===================================================== */
-
 import { auth, provider, db } from "./firebase.js";
-
-/* =====================================================
-IMPORTACIÓN DE MÉTODOS FIREBASE
-===================================================== */
 
 import {
 signInWithPopup,
@@ -17,12 +9,10 @@ import {
 collection,
 query,
 where,
-getDocs
+getDocs,
+doc,
+setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-/* =====================================================
-ELEMENTOS HTML
-===================================================== */
 
 const login = document.getElementById("login");
 const mensaje = document.getElementById("mensaje");
@@ -37,15 +27,13 @@ const overlay = document.getElementById("overlay");
 const userPhotoTop = document.getElementById("userPhotoTop");
 const userEmailTop = document.getElementById("userEmailTop");
 
-/* =====================================================
-FORMULARIO NUEVO USUARIO
-===================================================== */
-
 const formNuevoUsuario = document.getElementById("formNuevoUsuario");
 
-/* =====================================================
-MENÚS
-===================================================== */
+const inputNombres = document.getElementById("inputNombres");
+const inputApellidos = document.getElementById("inputApellidos");
+const inputEmail = document.getElementById("inputEmail");
+
+const btnIngresarUsuario = document.getElementById("btnIngresarUsuario");
 
 const menuDashboard = document.getElementById("menuDashboard");
 const menuAdministracion = document.getElementById("menuAdministracion");
@@ -59,39 +47,25 @@ const menuProductos = document.getElementById("menuProductos");
 const menuMovimientos = document.getElementById("menuMovimientos");
 const menuLogout = document.getElementById("menuLogout");
 
-/* =====================================================
-FUNCIONES SIDEBAR
-===================================================== */
-
 function abrirSidebar(){
-
 sidebar.classList.add("active");
 overlay.classList.add("active");
-
 }
 
 function cerrarSidebar(){
-
 sidebar.classList.remove("active");
 overlay.classList.remove("active");
-
 }
 
 menuToggle.onclick=()=>{
-
 if(sidebar.classList.contains("active")){
 cerrarSidebar();
 }else{
 abrirSidebar();
 }
-
 };
 
 overlay.onclick=()=>{ cerrarSidebar(); };
-
-/* =====================================================
-ACTIVAR MENÚ
-===================================================== */
 
 function activarMenu(menu,nombre){
 
@@ -103,57 +77,26 @@ menu.classList.add("active");
 
 tituloPagina.innerHTML=nombre;
 
-/* ocultar formulario nuevo usuario */
-
 formNuevoUsuario.style.display="none";
 
 cerrarSidebar();
-
 }
 
-/* =====================================================
-ABRIR SUBMENÚ ADMINISTRACIÓN
-===================================================== */
-
 menuAdministracion.onclick=()=>{
-
 submenuAdministracion.classList.toggle("active");
-
 };
-
-/* =====================================================
-SUBMENÚ NUEVO USUARIO
-===================================================== */
 
 menuNuevoUsuario.onclick=()=>{
-
 tituloPagina.innerHTML="Nuevo Usuario";
-
-/* mostrar formulario */
-
 formNuevoUsuario.style.display="block";
-
 cerrarSidebar();
-
 };
-
-/* =====================================================
-SUBMENÚ ACTUALIZAR USUARIO
-===================================================== */
 
 menuActualizarUsuario.onclick=()=>{
-
 tituloPagina.innerHTML="Actualizar Usuario";
-
 formNuevoUsuario.style.display="none";
-
 cerrarSidebar();
-
 };
-
-/* =====================================================
-LOGIN GOOGLE
-===================================================== */
 
 login.onclick = async () => {
 
@@ -164,8 +107,6 @@ const result = await signInWithPopup(auth, provider);
 const user = result.user;
 
 const email = user.email;
-
-/* VALIDACIÓN WHITELIST */
 
 const q=query(
 collection(db,"whitelist"),
@@ -178,7 +119,6 @@ const querySnapshot = await getDocs(q);
 if(!querySnapshot.empty){
 
 login.style.display="none";
-
 topbar.style.display="flex";
 
 tituloPagina.innerHTML="Dashboard";
@@ -198,23 +138,11 @@ await signOut(auth);
 
 }catch(error){
 
-if(error.code==="auth/popup-closed-by-user"){
-
-mensaje.innerHTML="Login cancelado";
-
-}else{
-
 mensaje.innerHTML="Error login: "+error.message;
 
 }
 
-}
-
 };
-
-/* =====================================================
-LOGOUT
-===================================================== */
 
 menuLogout.onclick=async()=>{
 
@@ -239,30 +167,60 @@ m.classList.remove("active");
 
 };
 
-/* =====================================================
-EVENTOS MENÚS
-===================================================== */
-
 menuDashboard.onclick=()=>{
-
 activarMenu(menuDashboard,"Dashboard");
-
 };
 
 menuCategorias.onclick=()=>{
-
 activarMenu(menuCategorias,"Categorías");
-
 };
 
 menuProductos.onclick=()=>{
-
 activarMenu(menuProductos,"Productos");
-
 };
 
 menuMovimientos.onclick=()=>{
-
 activarMenu(menuMovimientos,"Movimientos");
+};
+
+btnIngresarUsuario.onclick = async () => {
+
+try{
+
+const nombres = inputNombres.value.trim();
+const apellidos = inputApellidos.value.trim();
+const email = inputEmail.value.trim();
+
+if(nombres==="" || apellidos==="" || email===""){
+alert("Debe completar todos los campos");
+return;
+}
+
+const docId = email.replace("@gmail.com","");
+
+await setDoc(
+doc(db,"whitelist",docId),
+{
+nombres:nombres,
+apellidos:apellidos,
+email:email,
+permisos:"operador",
+enabled:true
+}
+);
+
+alert("Usuario creado correctamente");
+
+inputNombres.value="";
+inputApellidos.value="";
+inputEmail.value="";
+
+}catch(error){
+
+console.error(error);
+
+alert("Error al crear usuario");
+
+}
 
 };

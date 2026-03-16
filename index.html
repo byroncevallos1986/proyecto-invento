@@ -3,23 +3,11 @@
 
 <head>
 
-<!-- =====================================================
-TÍTULO DE LA PÁGINA
-===================================================== -->
-
 <title>INVENTO</title>
-
-<!-- =====================================================
-ICONO DEL SITIO
-===================================================== -->
 
 <link rel="icon" href="favicon.ico">
 
 <style>
-
-/* =====================================================
-CONFIGURACIÓN GENERAL
-===================================================== */
 
 body{
 margin:0;
@@ -27,42 +15,25 @@ font-family:Arial;
 display:flex;
 }
 
-/* =====================================================
-BARRA SUPERIOR
-===================================================== */
-
 #topbar{
-
 height:60px;
 width:100%;
-
 background:#1e293b;
 color:white;
-
 display:none;
-
 align-items:center;
 justify-content:space-between;
-
 padding:0 20px;
-
 position:fixed;
 top:0;
 left:0;
-
 z-index:1000;
 }
-
-/* botón hamburguesa */
 
 #menuToggle{
 font-size:26px;
 cursor:pointer;
 }
-
-/* =====================================================
-INFORMACIÓN USUARIO
-===================================================== */
 
 #userInfoTop{
 display:flex;
@@ -71,50 +42,31 @@ gap:10px;
 max-width:50%;
 }
 
-/* foto */
-
 #userPhotoTop{
 width:35px;
 height:35px;
 border-radius:50%;
 }
 
-/* email */
-
 #userEmailTop{
-
 font-size:13px;
-
 white-space:nowrap;
 overflow:hidden;
 text-overflow:ellipsis;
-
 max-width:250px;
-
 }
 
-/* =====================================================
-OVERLAY
-===================================================== */
-
 #overlay{
-
 position:fixed;
 top:0;
 left:0;
-
 width:100%;
 height:100%;
-
 background:rgba(0,0,0,0.4);
-
 opacity:0;
 visibility:hidden;
-
 transition:0.3s;
-
 z-index:900;
-
 }
 
 #overlay.active{
@@ -122,55 +74,31 @@ opacity:1;
 visibility:visible;
 }
 
-/* =====================================================
-SIDEBAR
-===================================================== */
-
 #sidebar{
-
 width:220px;
-
 height:calc(100vh - 60px);
-
 background:#1e293b;
 color:white;
-
 position:fixed;
-
 left:-220px;
-
 top:60px;
-
 transition:0.3s;
-
 display:flex;
 flex-direction:column;
-
 z-index:1001;
-
 }
 
 #sidebar.active{
 left:0;
 }
 
-/* =====================================================
-MENÚ PRINCIPAL
-===================================================== */
-
 .menu{
-
 padding:15px;
-
 cursor:pointer;
-
 display:flex;
 align-items:center;
-
 gap:10px;
-
 font-size:16px;
-
 }
 
 .menu:hover{
@@ -181,17 +109,10 @@ background:#334155;
 background:#475569;
 }
 
-/* =====================================================
-SUBMENÚ
-===================================================== */
-
 .submenu{
-
 display:none;
 flex-direction:column;
-
 background:#334155;
-
 }
 
 .submenu.active{
@@ -199,56 +120,34 @@ display:flex;
 }
 
 .submenu-item{
-
 padding:12px 15px 12px 40px;
-
 cursor:pointer;
-
 font-size:14px;
-
 }
 
 .submenu-item:hover{
 background:#475569;
 }
 
-/* =====================================================
-CONTENIDO
-===================================================== */
-
 #content{
-
 flex:1;
-
 padding:80px 30px 30px 30px;
-
 width:100%;
-
 }
 
-/* =====================================================
-FORMULARIO NUEVO USUARIO
-===================================================== */
-
 #formNuevoUsuario{
-
 display:none;
 max-width:500px;
 margin-top:40px;
-
 }
 
 .campoFormulario{
-
 margin-bottom:15px;
-
 }
 
 .campoFormulario input{
-
 width:100%;
 padding:8px;
-
 }
 
 </style>
@@ -258,10 +157,6 @@ padding:8px;
 </head>
 
 <body>
-
-<!-- =====================================================
-TOPBAR
-===================================================== -->
 
 <div id="topbar">
 
@@ -279,31 +174,17 @@ TOPBAR
 
 </div>
 
-<!-- =====================================================
-OVERLAY
-===================================================== -->
-
 <div id="overlay"></div>
 
-<!-- =====================================================
-SIDEBAR
-===================================================== -->
-
 <div id="sidebar">
-
-<!-- DASHBOARD -->
 
 <div class="menu" id="menuDashboard">
 📊 Dashboard
 </div>
 
-<!-- ADMINISTRACIÓN -->
-
 <div class="menu" id="menuAdministracion">
 ⚙️ Administración
 </div>
-
-<!-- SUBMENÚ ADMINISTRACIÓN -->
 
 <div class="submenu" id="submenuAdministracion">
 
@@ -317,25 +198,17 @@ SIDEBAR
 
 </div>
 
-<!-- CATEGORÍAS -->
-
 <div class="menu" id="menuCategorias">
 🗂️ Categorías
 </div>
-
-<!-- PRODUCTOS -->
 
 <div class="menu" id="menuProductos">
 📦 Productos
 </div>
 
-<!-- MOVIMIENTOS -->
-
 <div class="menu" id="menuMovimientos">
 🔄 Movimientos
 </div>
-
-<!-- LOGOUT -->
 
 <div class="menu" id="menuLogout">
 🚪 Logout
@@ -343,53 +216,32 @@ SIDEBAR
 
 </div>
 
-<!-- =====================================================
-CONTENIDO PRINCIPAL
-===================================================== -->
-
 <div id="content">
 
 <h1 id="tituloPagina">INVENTO</h1>
 
-<!-- =====================================================
-FORMULARIO NUEVO USUARIO
-===================================================== -->
-
 <div id="formNuevoUsuario">
 
 <div class="campoFormulario">
-
 <label>Nombres:</label>
-
-<input type="text">
-
+<input type="text" id="inputNombres">
 </div>
 
 <div class="campoFormulario">
-
 <label>Apellidos:</label>
-
-<input type="text">
-
+<input type="text" id="inputApellidos">
 </div>
 
 <div class="campoFormulario">
-
 <label>Email:</label>
-
-<input type="email">
-
+<input type="email" id="inputEmail">
 </div>
 
-<button>
-
+<button id="btnIngresarUsuario">
 Ingresar
-
 </button>
 
 </div>
-
-<!-- LOGIN -->
 
 <button id="login">
 Login con Google
