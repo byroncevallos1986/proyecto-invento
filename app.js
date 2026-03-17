@@ -191,7 +191,26 @@ const nombres = inputNombres.value.trim();
 const apellidos = inputApellidos.value.trim();
 const email = inputEmail.value.trim();
 
-if(nombres==="" || apellidos==="" || email===""){
+const errorNombres = document.getElementById("errorNombres");
+
+/* VALIDACIÓN NOMBRES */
+
+const regexNombres = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
+
+if(nombres === "" || !regexNombres.test(nombres)){
+
+errorNombres.style.display="block";
+return;
+
+}else{
+
+errorNombres.style.display="none";
+
+}
+
+/* VALIDACIÓN CAMPOS VACÍOS (resto) */
+
+if(apellidos==="" || email===""){
 alert("Debe completar todos los campos");
 return;
 }

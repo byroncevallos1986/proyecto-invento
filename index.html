@@ -150,6 +150,14 @@ width:100%;
 padding:8px;
 }
 
+/* MENSAJE ERROR */
+.error{
+color:red;
+font-size:12px;
+margin-top:5px;
+display:none;
+}
+
 </style>
 
 <script type="module" src="app.js"></script>
@@ -159,60 +167,33 @@ padding:8px;
 <body>
 
 <div id="topbar">
-
-<div id="menuToggle">
-☰
-</div>
-
+<div id="menuToggle">☰</div>
 <div id="userInfoTop">
-
 <img id="userPhotoTop">
-
 <div id="userEmailTop"></div>
-
 </div>
-
 </div>
 
 <div id="overlay"></div>
 
 <div id="sidebar">
 
-<div class="menu" id="menuDashboard">
-📊 Dashboard
-</div>
+<div class="menu" id="menuDashboard">📊 Dashboard</div>
 
-<div class="menu" id="menuAdministracion">
-⚙️ Administración
-</div>
+<div class="menu" id="menuAdministracion">⚙️ Administración</div>
 
 <div class="submenu" id="submenuAdministracion">
 
-<div class="submenu-item" id="menuNuevoUsuario">
-👤 Nuevo Usuario
-</div>
+<div class="submenu-item" id="menuNuevoUsuario">👤 Nuevo Usuario</div>
 
-<div class="submenu-item" id="menuActualizarUsuario">
-✏️ Actualizar Usuario
-</div>
+<div class="submenu-item" id="menuActualizarUsuario">✏️ Actualizar Usuario</div>
 
 </div>
 
-<div class="menu" id="menuCategorias">
-🗂️ Categorías
-</div>
-
-<div class="menu" id="menuProductos">
-📦 Productos
-</div>
-
-<div class="menu" id="menuMovimientos">
-🔄 Movimientos
-</div>
-
-<div class="menu" id="menuLogout">
-🚪 Logout
-</div>
+<div class="menu" id="menuCategorias">🗂️ Categorías</div>
+<div class="menu" id="menuProductos">📦 Productos</div>
+<div class="menu" id="menuMovimientos">🔄 Movimientos</div>
+<div class="menu" id="menuLogout">🚪 Logout</div>
 
 </div>
 
@@ -225,6 +206,9 @@ padding:8px;
 <div class="campoFormulario">
 <label>Nombres:</label>
 <input type="text" id="inputNombres">
+<div id="errorNombres" class="error">
+El campo acepta únicamente caracteres alfabéticos y no puede estar vacío
+</div>
 </div>
 
 <div class="campoFormulario">
@@ -237,20 +221,15 @@ padding:8px;
 <input type="email" id="inputEmail">
 </div>
 
-<button id="btnIngresarUsuario">
-Ingresar
-</button>
+<button id="btnIngresarUsuario">Ingresar</button>
 
 </div>
 
-<button id="login">
-Login con Google
-</button>
+<button id="login">Login con Google</button>
 
 <div id="mensaje"></div>
 
 </div>
 
 </body>
-
 </html>
