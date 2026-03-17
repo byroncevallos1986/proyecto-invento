@@ -14,176 +14,91 @@ doc,
 setDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-const login = document.getElementById("login");
-const mensaje = document.getElementById("mensaje");
-const tituloPagina = document.getElementById("tituloPagina");
-
-const topbar = document.getElementById("topbar");
-
-const sidebar = document.getElementById("sidebar");
-const menuToggle = document.getElementById("menuToggle");
-const overlay = document.getElementById("overlay");
-
-const userPhotoTop = document.getElementById("userPhotoTop");
-const userEmailTop = document.getElementById("userEmailTop");
-
-const formNuevoUsuario = document.getElementById("formNuevoUsuario");
+/* ===== ELEMENTOS ===== */
 
 const inputNombres = document.getElementById("inputNombres");
 const inputApellidos = document.getElementById("inputApellidos");
 const inputEmail = document.getElementById("inputEmail");
 
+const errorNombres = document.getElementById("errorNombres");
+const errorApellidos = document.getElementById("errorApellidos");
+const errorEmail = document.getElementById("errorEmail");
+
 const btnIngresarUsuario = document.getElementById("btnIngresarUsuario");
 
-const menuDashboard = document.getElementById("menuDashboard");
-const menuAdministracion = document.getElementById("menuAdministracion");
-const submenuAdministracion = document.getElementById("submenuAdministracion");
+/* ===== VALIDACIONES ===== */
 
-const menuNuevoUsuario = document.getElementById("menuNuevoUsuario");
-const menuActualizarUsuario = document.getElementById("menuActualizarUsuario");
+// Regex: solo letras + acentos + espacios (sin doble espacio)
+const regexTexto = /^[A-Za-zÁÉÍÓÚÑáéíóúñ]+( [A-Za-zÁÉÍÓÚÑáéíóúñ]+)*$/;
 
-const menuCategorias = document.getElementById("menuCategorias");
-const menuProductos = document.getElementById("menuProductos");
-const menuMovimientos = document.getElementById("menuMovimientos");
-const menuLogout = document.getElementById("menuLogout");
+// Regex email gmail
+const regexEmail = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
-function abrirSidebar(){
-sidebar.classList.add("active");
-overlay.classList.add("active");
+/* ===== FUNCIÓN VALIDAR ===== */
+
+async function validarFormulario(){
+
+let valido = true;
+
+/* limpiar errores */
+errorNombres.style.display="none";
+errorApellidos.style.display="none";
+errorEmail.style.display="none";
+
+/* ===== NOMBRES ===== */
+
+const nombres = inputNombres.value.trim();
+
+if(!regexTexto.test(nombres)){
+errorNombres.style.display="block";
+valido=false;
 }
 
-function cerrarSidebar(){
-sidebar.classList.remove("active");
-overlay.classList.remove("active");
+/* ===== APELLIDOS ===== */
+
+const apellidos = inputApellidos.value.trim();
+
+if(!regexTexto.test(apellidos)){
+errorApellidos.style.display="block";
+valido=false;
 }
 
-menuToggle.onclick=()=>{
-if(sidebar.classList.contains("active")){
-cerrarSidebar();
+/* ===== EMAIL ===== */
+
+const email = inputEmail.value.trim();
+
+if(!regexEmail.test(email)){
+errorEmail.style.display="block";
+valido=false;
 }else{
-abrirSidebar();
-}
-};
 
-overlay.onclick=()=>{ cerrarSidebar(); };
+/* validar duplicado en firestore */
 
-function activarMenu(menu,nombre){
-
-document.querySelectorAll(".menu").forEach(m=>{
-m.classList.remove("active");
-});
-
-menu.classList.add("active");
-
-tituloPagina.innerHTML=nombre;
-
-formNuevoUsuario.style.display="none";
-
-cerrarSidebar();
-}
-
-menuAdministracion.onclick=()=>{
-submenuAdministracion.classList.toggle("active");
-};
-
-menuNuevoUsuario.onclick=()=>{
-tituloPagina.innerHTML="Nuevo Usuario";
-formNuevoUsuario.style.display="block";
-cerrarSidebar();
-};
-
-menuActualizarUsuario.onclick=()=>{
-tituloPagina.innerHTML="Actualizar Usuario";
-formNuevoUsuario.style.display="none";
-cerrarSidebar();
-};
-
-login.onclick = async () => {
-
-try{
-
-const result = await signInWithPopup(auth, provider);
-
-const user = result.user;
-
-const email = user.email;
-
-const q=query(
+const q = query(
 collection(db,"whitelist"),
-where("email","==",email),
-where("enabled","==",true)
+where("email","==",email)
 );
 
-const querySnapshot = await getDocs(q);
+const result = await getDocs(q);
 
-if(!querySnapshot.empty){
-
-login.style.display="none";
-topbar.style.display="flex";
-
-tituloPagina.innerHTML="Dashboard";
-
-userPhotoTop.src=user.photoURL;
-userEmailTop.innerText=email;
-
-activarMenu(menuDashboard,"Dashboard");
-
-}else{
-
-mensaje.innerHTML="ACCESO DENEGADO";
-
-await signOut(auth);
+if(!result.empty){
+errorEmail.style.display="block";
+valido=false;
+}
 
 }
 
-}catch(error){
-
-mensaje.innerHTML="Error login: "+error.message;
+return valido;
 
 }
 
-};
-
-menuLogout.onclick=async()=>{
-
-await signOut(auth);
-
-topbar.style.display="none";
-
-login.style.display="block";
-
-tituloPagina.innerHTML="INVENTO";
-
-mensaje.innerHTML="Sesión cerrada";
-
-cerrarSidebar();
-
-userPhotoTop.src="";
-userEmailTop.innerHTML="";
-
-document.querySelectorAll(".menu").forEach(m=>{
-m.classList.remove("active");
-});
-
-};
-
-menuDashboard.onclick=()=>{
-activarMenu(menuDashboard,"Dashboard");
-};
-
-menuCategorias.onclick=()=>{
-activarMenu(menuCategorias,"Categorías");
-};
-
-menuProductos.onclick=()=>{
-activarMenu(menuProductos,"Productos");
-};
-
-menuMovimientos.onclick=()=>{
-activarMenu(menuMovimientos,"Movimientos");
-};
+/* ===== CREAR USUARIO ===== */
 
 btnIngresarUsuario.onclick = async () => {
+
+const esValido = await validarFormulario();
+
+if(!esValido) return;
 
 try{
 
@@ -191,19 +106,14 @@ const nombres = inputNombres.value.trim();
 const apellidos = inputApellidos.value.trim();
 const email = inputEmail.value.trim();
 
-if(nombres==="" || apellidos==="" || email===""){
-alert("Debe completar todos los campos");
-return;
-}
-
 const docId = email.replace("@gmail.com","");
 
 await setDoc(
 doc(db,"whitelist",docId),
 {
-nombres:nombres,
-apellidos:apellidos,
-email:email,
+nombres,
+apellidos,
+email,
 permisos:"operador",
 enabled:true
 }
@@ -211,6 +121,7 @@ enabled:true
 
 alert("Usuario creado correctamente");
 
+/* limpiar */
 inputNombres.value="";
 inputApellidos.value="";
 inputEmail.value="";
@@ -218,7 +129,6 @@ inputEmail.value="";
 }catch(error){
 
 console.error(error);
-
 alert("Error al crear usuario");
 
 }

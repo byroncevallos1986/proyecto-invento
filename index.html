@@ -4,7 +4,6 @@
 <head>
 
 <title>INVENTO</title>
-
 <link rel="icon" href="favicon.ico">
 
 <style>
@@ -14,6 +13,16 @@ margin:0;
 font-family:Arial;
 display:flex;
 }
+
+/* ====== ERRORES ====== */
+.error{
+color:red;
+font-size:12px;
+margin-top:5px;
+display:none;
+}
+
+/* ====== RESTO IGUAL ====== */
 
 #topbar{
 height:60px;
@@ -30,49 +39,7 @@ left:0;
 z-index:1000;
 }
 
-#menuToggle{
-font-size:26px;
-cursor:pointer;
-}
-
-#userInfoTop{
-display:flex;
-align-items:center;
-gap:10px;
-max-width:50%;
-}
-
-#userPhotoTop{
-width:35px;
-height:35px;
-border-radius:50%;
-}
-
-#userEmailTop{
-font-size:13px;
-white-space:nowrap;
-overflow:hidden;
-text-overflow:ellipsis;
-max-width:250px;
-}
-
-#overlay{
-position:fixed;
-top:0;
-left:0;
-width:100%;
-height:100%;
-background:rgba(0,0,0,0.4);
-opacity:0;
-visibility:hidden;
-transition:0.3s;
-z-index:900;
-}
-
-#overlay.active{
-opacity:1;
-visibility:visible;
-}
+#menuToggle{font-size:26px;cursor:pointer;}
 
 #sidebar{
 width:220px;
@@ -85,54 +52,17 @@ top:60px;
 transition:0.3s;
 display:flex;
 flex-direction:column;
-z-index:1001;
 }
 
-#sidebar.active{
-left:0;
-}
+#sidebar.active{left:0;}
 
-.menu{
-padding:15px;
-cursor:pointer;
-display:flex;
-align-items:center;
-gap:10px;
-font-size:16px;
-}
-
-.menu:hover{
-background:#334155;
-}
-
-.menu.active{
-background:#475569;
-}
-
-.submenu{
-display:none;
-flex-direction:column;
-background:#334155;
-}
-
-.submenu.active{
-display:flex;
-}
-
-.submenu-item{
-padding:12px 15px 12px 40px;
-cursor:pointer;
-font-size:14px;
-}
-
-.submenu-item:hover{
-background:#475569;
-}
+.menu{padding:15px;cursor:pointer;}
+.submenu{display:none;}
+.submenu.active{display:block;}
 
 #content{
 flex:1;
-padding:80px 30px 30px 30px;
-width:100%;
+padding:80px 30px;
 }
 
 #formNuevoUsuario{
@@ -145,7 +75,7 @@ margin-top:40px;
 margin-bottom:15px;
 }
 
-.campoFormulario input{
+input{
 width:100%;
 padding:8px;
 }
@@ -159,59 +89,20 @@ padding:8px;
 <body>
 
 <div id="topbar">
-
-<div id="menuToggle">
-☰
+<div id="menuToggle">☰</div>
 </div>
-
-<div id="userInfoTop">
-
-<img id="userPhotoTop">
-
-<div id="userEmailTop"></div>
-
-</div>
-
-</div>
-
-<div id="overlay"></div>
 
 <div id="sidebar">
 
-<div class="menu" id="menuDashboard">
-📊 Dashboard
-</div>
+<div class="menu" id="menuDashboard">📊 Dashboard</div>
 
-<div class="menu" id="menuAdministracion">
-⚙️ Administración
-</div>
+<div class="menu" id="menuAdministracion">⚙️ Administración</div>
 
 <div class="submenu" id="submenuAdministracion">
 
-<div class="submenu-item" id="menuNuevoUsuario">
-👤 Nuevo Usuario
-</div>
+<div class="submenu-item" id="menuNuevoUsuario">👤 Nuevo Usuario</div>
+<div class="submenu-item" id="menuActualizarUsuario">✏️ Actualizar Usuario</div>
 
-<div class="submenu-item" id="menuActualizarUsuario">
-✏️ Actualizar Usuario
-</div>
-
-</div>
-
-<div class="menu" id="menuCategorias">
-🗂️ Categorías
-</div>
-
-<div class="menu" id="menuProductos">
-📦 Productos
-</div>
-
-<div class="menu" id="menuMovimientos">
-🔄 Movimientos
-</div>
-
-<div class="menu" id="menuLogout">
-🚪 Logout
 </div>
 
 </div>
@@ -225,32 +116,36 @@ padding:8px;
 <div class="campoFormulario">
 <label>Nombres:</label>
 <input type="text" id="inputNombres">
+<div id="errorNombres" class="error">
+El campo acepta únicamente caracteres alfabéticos y no puede estar vacío
+</div>
 </div>
 
 <div class="campoFormulario">
 <label>Apellidos:</label>
 <input type="text" id="inputApellidos">
+<div id="errorApellidos" class="error">
+El campo acepta únicamente caracteres alfabéticos y no puede estar vacío
+</div>
 </div>
 
 <div class="campoFormulario">
 <label>Email:</label>
 <input type="email" id="inputEmail">
+<div id="errorEmail" class="error">
+Correo no válido o ya registrado. Use el formato usuario@gmail.com.
+</div>
 </div>
 
-<button id="btnIngresarUsuario">
-Ingresar
-</button>
+<button id="btnIngresarUsuario">Ingresar</button>
 
 </div>
 
-<button id="login">
-Login con Google
-</button>
+<button id="login">Login con Google</button>
 
 <div id="mensaje"></div>
 
 </div>
 
 </body>
-
 </html>
