@@ -193,11 +193,11 @@ const email = inputEmail.value.trim();
 
 const errorNombres = document.getElementById("errorNombres");
 const errorApellidos = document.getElementById("errorApellidos");
-
-/* VALIDACIÓN NOMBRES */
+const errorEmail = document.getElementById("errorEmail");
 
 const regex = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
 
+/* VALIDACIÓN NOMBRES */
 if(nombres === "" || !regex.test(nombres)){
 errorNombres.style.display="block";
 }else{
@@ -205,28 +205,50 @@ errorNombres.style.display="none";
 }
 
 /* VALIDACIÓN APELLIDOS */
-
 if(apellidos === "" || !regex.test(apellidos)){
 errorApellidos.style.display="block";
 }else{
 errorApellidos.style.display="none";
 }
 
-/* SI ALGUNO FALLA, DETENER */
+/* VALIDACIÓN EMAIL FORMATO GMAIL */
+const regexEmail = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
+let emailValido = true;
+
+if(email === "" || !regexEmail.test(email)){
+errorEmail.style.display="block";
+emailValido = false;
+}else{
+
+/* VALIDAR SI YA EXISTE EN FIRESTORE */
+
+const q = query(
+collection(db,"whitelist"),
+where("email","==",email)
+);
+
+const querySnapshot = await getDocs(q);
+
+if(!querySnapshot.empty){
+errorEmail.style.display="block";
+emailValido = false;
+}else{
+errorEmail.style.display="none";
+}
+
+}
+
+/* DETENER SI HAY ERRORES */
 if(
 nombres === "" || !regex.test(nombres) ||
-apellidos === "" || !regex.test(apellidos)
+apellidos === "" || !regex.test(apellidos) ||
+!emailValido
 ){
 return;
 }
 
-/* VALIDACIÓN EMAIL (SIN CAMBIOS) */
-
-if(email===""){
-alert("Debe completar todos los campos");
-return;
-}
+/* SIN CAMBIOS RESTO */
 
 const docId = email.replace("@gmail.com","");
 
