@@ -192,25 +192,38 @@ const apellidos = inputApellidos.value.trim();
 const email = inputEmail.value.trim();
 
 const errorNombres = document.getElementById("errorNombres");
+const errorApellidos = document.getElementById("errorApellidos");
 
 /* VALIDACIÓN NOMBRES */
 
-const regexNombres = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
+const regex = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
 
-if(nombres === "" || !regexNombres.test(nombres)){
-
+if(nombres === "" || !regex.test(nombres)){
 errorNombres.style.display="block";
-return;
-
 }else{
-
 errorNombres.style.display="none";
-
 }
 
-/* VALIDACIÓN CAMPOS VACÍOS (resto) */
+/* VALIDACIÓN APELLIDOS */
 
-if(apellidos==="" || email===""){
+if(apellidos === "" || !regex.test(apellidos)){
+errorApellidos.style.display="block";
+}else{
+errorApellidos.style.display="none";
+}
+
+/* SI ALGUNO FALLA, DETENER */
+
+if(
+nombres === "" || !regex.test(nombres) ||
+apellidos === "" || !regex.test(apellidos)
+){
+return;
+}
+
+/* VALIDACIÓN EMAIL (SIN CAMBIOS) */
+
+if(email===""){
 alert("Debe completar todos los campos");
 return;
 }
@@ -237,7 +250,6 @@ inputEmail.value="";
 }catch(error){
 
 console.error(error);
-
 alert("Error al crear usuario");
 
 }
