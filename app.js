@@ -77,6 +77,7 @@ menu.classList.add("active");
 
 tituloPagina.innerHTML=nombre;
 
+/* OCULTAR FORMULARIOS */
 formNuevoUsuario.style.display="none";
 
 cerrarSidebar();
@@ -144,26 +145,37 @@ mensaje.innerHTML="Error login: "+error.message;
 
 };
 
+/* ========================= */
+/* 🔴 LOGOUT CORREGIDO */
+/* ========================= */
 menuLogout.onclick=async()=>{
 
 await signOut(auth);
 
+/* OCULTAR UI PRIVADA */
 topbar.style.display="none";
+formNuevoUsuario.style.display="none"; // ✅ SOLUCIÓN PRINCIPAL
 
+/* MOSTRAR LOGIN */
 login.style.display="block";
 
+/* RESET GENERAL */
 tituloPagina.innerHTML="INVENTO";
-
 mensaje.innerHTML="Sesión cerrada";
 
 cerrarSidebar();
 
+/* LIMPIAR DATOS USUARIO */
 userPhotoTop.src="";
 userEmailTop.innerHTML="";
 
+/* RESET MENÚS */
 document.querySelectorAll(".menu").forEach(m=>{
 m.classList.remove("active");
 });
+
+/* CERRAR SUBMENÚ */
+submenuAdministracion.classList.remove("active");
 
 };
 
@@ -211,7 +223,7 @@ errorApellidos.style.display="block";
 errorApellidos.style.display="none";
 }
 
-/* VALIDACIÓN EMAIL FORMATO GMAIL */
+/* VALIDACIÓN EMAIL GMAIL */
 const regexEmail = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
 let emailValido = true;
@@ -220,8 +232,6 @@ if(email === "" || !regexEmail.test(email)){
 errorEmail.style.display="block";
 emailValido = false;
 }else{
-
-/* VALIDAR SI YA EXISTE EN FIRESTORE */
 
 const q = query(
 collection(db,"whitelist"),
@@ -239,7 +249,6 @@ errorEmail.style.display="none";
 
 }
 
-/* DETENER SI HAY ERRORES */
 if(
 nombres === "" || !regex.test(nombres) ||
 apellidos === "" || !regex.test(apellidos) ||
@@ -247,8 +256,6 @@ apellidos === "" || !regex.test(apellidos) ||
 ){
 return;
 }
-
-/* SIN CAMBIOS RESTO */
 
 const docId = email.replace("@gmail.com","");
 
