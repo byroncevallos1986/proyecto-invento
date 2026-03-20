@@ -99,6 +99,9 @@ formNuevoUsuario.style.display="none";
 cerrarSidebar();
 };
 
+/* ========================= */
+/* LOGIN */
+/* ========================= */
 login.onclick = async () => {
 
 try{
@@ -106,8 +109,10 @@ try{
 const result = await signInWithPopup(auth, provider);
 
 const user = result.user;
-
 const email = user.email;
+
+/* 🔴 LIMPIAR MENSAJES */
+mensaje.innerHTML = "";
 
 const q=query(
 collection(db,"whitelist"),
@@ -146,35 +151,29 @@ mensaje.innerHTML="Error login: "+error.message;
 };
 
 /* ========================= */
-/* 🔴 LOGOUT CORREGIDO */
+/* LOGOUT */
 /* ========================= */
 menuLogout.onclick=async()=>{
 
 await signOut(auth);
 
-/* OCULTAR UI PRIVADA */
 topbar.style.display="none";
-formNuevoUsuario.style.display="none"; // ✅ SOLUCIÓN PRINCIPAL
+formNuevoUsuario.style.display="none";
 
-/* MOSTRAR LOGIN */
 login.style.display="block";
 
-/* RESET GENERAL */
 tituloPagina.innerHTML="INVENTO";
 mensaje.innerHTML="Sesión cerrada";
 
 cerrarSidebar();
 
-/* LIMPIAR DATOS USUARIO */
 userPhotoTop.src="";
 userEmailTop.innerHTML="";
 
-/* RESET MENÚS */
 document.querySelectorAll(".menu").forEach(m=>{
 m.classList.remove("active");
 });
 
-/* CERRAR SUBMENÚ */
 submenuAdministracion.classList.remove("active");
 
 };
@@ -195,6 +194,9 @@ menuMovimientos.onclick=()=>{
 activarMenu(menuMovimientos,"Movimientos");
 };
 
+/* ========================= */
+/* CREAR USUARIO */
+/* ========================= */
 btnIngresarUsuario.onclick = async () => {
 
 try{
@@ -223,7 +225,7 @@ errorApellidos.style.display="block";
 errorApellidos.style.display="none";
 }
 
-/* VALIDACIÓN EMAIL GMAIL */
+/* VALIDACIÓN EMAIL */
 const regexEmail = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
 
 let emailValido = true;
