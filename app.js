@@ -111,7 +111,6 @@ const result = await signInWithPopup(auth, provider);
 const user = result.user;
 const email = user.email;
 
-/* 🔴 LIMPIAR MENSAJES */
 mensaje.innerHTML = "";
 
 const q=query(
@@ -137,7 +136,6 @@ activarMenu(menuDashboard,"Dashboard");
 }else{
 
 mensaje.innerHTML="ACCESO DENEGADO";
-
 await signOut(auth);
 
 }
@@ -259,16 +257,40 @@ apellidos === "" || !regex.test(apellidos) ||
 return;
 }
 
-const docId = email.replace("@gmail.com","");
+/* ========================= */
+/* GENERAR ID SERIAL user000X */
+/* ========================= */
+const snapshot = await getDocs(collection(db,"whitelist"));
 
+let max = 0;
+
+snapshot.forEach(docu=>{
+const id = docu.id; // user0001
+const num = parseInt(id.replace("user",""));
+if(num > max){
+max = num;
+}
+});
+
+const nuevoId = "user" + String(max + 1).padStart(4,"0");
+
+/* ========================= */
+/* FECHA CREACIÓN */
+/* ========================= */
+const fechaCreacion = new Date();
+
+/* ========================= */
+/* GUARDAR EN FIRESTORE */
+/* ========================= */
 await setDoc(
-doc(db,"whitelist",docId),
+doc(db,"whitelist",nuevoId),
 {
 nombres:nombres,
 apellidos:apellidos,
 email:email,
 permisos:"operador",
-enabled:true
+enabled:true,
+creacion: fechaCreacion
 }
 );
 
