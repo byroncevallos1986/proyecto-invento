@@ -4,6 +4,7 @@
 <head>
 
 <title>INVENTO</title>
+
 <link rel="icon" href="favicon.ico">
 
 <style>
@@ -14,7 +15,6 @@ font-family:Arial;
 display:flex;
 }
 
-/* TOPBAR */
 #topbar{
 height:60px;
 width:100%;
@@ -35,7 +35,6 @@ font-size:26px;
 cursor:pointer;
 }
 
-/* INFO USUARIO */
 #userInfoTop{
 display:flex;
 align-items:center;
@@ -57,7 +56,6 @@ text-overflow:ellipsis;
 max-width:250px;
 }
 
-/* OVERLAY */
 #overlay{
 position:fixed;
 top:0;
@@ -76,7 +74,6 @@ opacity:1;
 visibility:visible;
 }
 
-/* SIDEBAR */
 #sidebar{
 width:220px;
 height:calc(100vh - 60px);
@@ -112,7 +109,6 @@ background:#334155;
 background:#475569;
 }
 
-/* SUBMENU */
 .submenu{
 display:none;
 flex-direction:column;
@@ -133,52 +129,18 @@ font-size:14px;
 background:#475569;
 }
 
-/* CONTENIDO */
 #content{
 flex:1;
 padding:80px 30px 30px 30px;
 width:100%;
 }
 
-/* FORMULARIO NUEVO USUARIO */
 #formNuevoUsuario{
 display:none;
 max-width:500px;
 margin-top:40px;
 }
 
-/* TABLA USUARIOS */
-#tablaUsuariosContainer{
-display:none;
-margin-top:30px;
-}
-
-table{
-width:100%;
-border-collapse:collapse;
-}
-
-th, td{
-border:1px solid #ccc;
-padding:8px;
-text-align:left;
-}
-
-th{
-background:#f1f5f9;
-}
-
-/* BOTÓN */
-.btn{
-padding:8px 12px;
-background:#1e293b;
-color:white;
-border:none;
-cursor:pointer;
-margin-bottom:10px;
-}
-
-/* CAMPOS */
 .campoFormulario{
 margin-bottom:15px;
 }
@@ -188,7 +150,7 @@ width:100%;
 padding:8px;
 }
 
-/* ERRORES */
+/* MENSAJE ERROR */
 .error{
 color:red;
 font-size:12px;
@@ -204,7 +166,6 @@ display:none;
 
 <body>
 
-<!-- TOPBAR -->
 <div id="topbar">
 <div id="menuToggle">☰</div>
 <div id="userInfoTop">
@@ -215,7 +176,6 @@ display:none;
 
 <div id="overlay"></div>
 
-<!-- SIDEBAR -->
 <div id="sidebar">
 
 <div class="menu" id="menuDashboard">📊 Dashboard</div>
@@ -223,8 +183,11 @@ display:none;
 <div class="menu" id="menuAdministracion">⚙️ Administración</div>
 
 <div class="submenu" id="submenuAdministracion">
+
 <div class="submenu-item" id="menuNuevoUsuario">👤 Nuevo Usuario</div>
+
 <div class="submenu-item" id="menuActualizarUsuario">✏️ Actualizar Usuario</div>
+
 </div>
 
 <div class="menu" id="menuCategorias">🗂️ Categorías</div>
@@ -234,19 +197,17 @@ display:none;
 
 </div>
 
-<!-- CONTENIDO -->
 <div id="content">
 
 <h1 id="tituloPagina">INVENTO</h1>
 
-<!-- FORM NUEVO USUARIO -->
 <div id="formNuevoUsuario">
 
 <div class="campoFormulario">
 <label>Nombres:</label>
 <input type="text" id="inputNombres">
 <div id="errorNombres" class="error">
-Solo letras y no vacío
+El campo acepta únicamente caracteres alfabéticos y no puede estar vacío
 </div>
 </div>
 
@@ -254,7 +215,7 @@ Solo letras y no vacío
 <label>Apellidos:</label>
 <input type="text" id="inputApellidos">
 <div id="errorApellidos" class="error">
-Solo letras y no vacío
+El campo acepta únicamente caracteres alfabéticos y no puede estar vacío
 </div>
 </div>
 
@@ -262,7 +223,7 @@ Solo letras y no vacío
 <label>Email:</label>
 <input type="email" id="inputEmail">
 <div id="errorEmail" class="error">
-Email inválido o ya existe
+El campo no puede estar vacío ni contener direcciones registradas
 </div>
 </div>
 
@@ -270,34 +231,8 @@ Email inválido o ya existe
 
 </div>
 
-<!-- TABLA USUARIOS -->
-<div id="tablaUsuariosContainer">
-
-<button class="btn">➕ Nuevo Usuario</button>
-
-<h2>Administración de Usuarios</h2>
-
-<table>
-<thead>
-<tr>
-<th>NOMBRES</th>
-<th>APELLIDOS</th>
-<th>EMAIL</th>
-<th>PERMISOS</th>
-<th>ESTADO</th>
-<th>ACCIONES</th>
-</tr>
-</thead>
-
-<tbody id="tablaUsuariosBody">
-<!-- DATA DINÁMICA -->
-</tbody>
-
-</table>
-
-</div>
-
 <button id="login">Login con Google</button>
+
 <div id="mensaje"></div>
 
 </div>
