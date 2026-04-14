@@ -135,10 +135,39 @@ padding:80px 30px 30px 30px;
 width:100%;
 }
 
+/* FORMULARIO */
 #formNuevoUsuario{
 display:none;
 max-width:500px;
 margin-top:40px;
+}
+
+/* TABLA USUARIOS */
+#tablaUsuarios{
+display:none;
+margin-top:30px;
+width:100%;
+border-collapse:collapse;
+}
+
+#tablaUsuarios th, #tablaUsuarios td{
+border-bottom:1px solid #ddd;
+padding:10px;
+text-align:left;
+}
+
+#tablaUsuarios th{
+background:#f1f5f9;
+}
+
+.estado-activo{
+color:green;
+font-weight:bold;
+}
+
+.estado-inactivo{
+color:red;
+font-weight:bold;
 }
 
 .campoFormulario{
@@ -150,7 +179,6 @@ width:100%;
 padding:8px;
 }
 
-/* MENSAJE ERROR */
 .error{
 color:red;
 font-size:12px;
@@ -201,13 +229,14 @@ display:none;
 
 <h1 id="tituloPagina">INVENTO</h1>
 
+<!-- FORMULARIO -->
 <div id="formNuevoUsuario">
 
 <div class="campoFormulario">
 <label>Nombres:</label>
 <input type="text" id="inputNombres">
 <div id="errorNombres" class="error">
-El campo acepta únicamente caracteres alfabéticos y no puede estar vacío
+El campo acepta únicamente caracteres alfabéticos
 </div>
 </div>
 
@@ -215,7 +244,7 @@ El campo acepta únicamente caracteres alfabéticos y no puede estar vacío
 <label>Apellidos:</label>
 <input type="text" id="inputApellidos">
 <div id="errorApellidos" class="error">
-El campo acepta únicamente caracteres alfabéticos y no puede estar vacío
+El campo acepta únicamente caracteres alfabéticos
 </div>
 </div>
 
@@ -223,7 +252,7 @@ El campo acepta únicamente caracteres alfabéticos y no puede estar vacío
 <label>Email:</label>
 <input type="email" id="inputEmail">
 <div id="errorEmail" class="error">
-El campo no puede estar vacío ni contener direcciones registradas
+Email inválido o ya registrado
 </div>
 </div>
 
@@ -231,8 +260,21 @@ El campo no puede estar vacío ni contener direcciones registradas
 
 </div>
 
-<button id="login">Login con Google</button>
+<!-- TABLA -->
+<table id="tablaUsuarios">
+<thead>
+<tr>
+<th>NOMBRES</th>
+<th>APELLIDOS</th>
+<th>EMAIL</th>
+<th>PERMISOS</th>
+<th>ESTADO</th>
+</tr>
+</thead>
+<tbody id="tbodyUsuarios"></tbody>
+</table>
 
+<button id="login">Login con Google</button>
 <div id="mensaje"></div>
 
 </div>
