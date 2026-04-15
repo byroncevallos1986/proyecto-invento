@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html>
 
@@ -174,7 +175,8 @@ font-weight:bold;
 margin-bottom:15px;
 }
 
-.campoFormulario input{
+.campoFormulario input,
+.campoFormulario select{
 width:100%;
 padding:8px;
 }
@@ -269,6 +271,7 @@ Email inválido o ya registrado
 <th>EMAIL</th>
 <th>PERMISOS</th>
 <th>ESTADO</th>
+<th>ACCIÓN</th>
 </tr>
 </thead>
 <tbody id="tbodyUsuarios"></tbody>
@@ -279,5 +282,49 @@ Email inválido o ya registrado
 
 </div>
 
+<!-- MODAL EDITAR USUARIO -->
+<div id="modalEditar" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); z-index:2000; justify-content:center; align-items:center;">
+
+<div style="background:white; padding:20px; width:400px; border-radius:8px;">
+
+<h3>Editar Usuario</h3>
+
+<input type="hidden" id="editId">
+
+<div class="campoFormulario">
+<label>Nombres:</label>
+<input type="text" id="editNombres">
+</div>
+
+<div class="campoFormulario">
+<label>Apellidos:</label>
+<input type="text" id="editApellidos">
+</div>
+
+<div class="campoFormulario">
+<label>Email:</label>
+<input type="email" id="editEmail">
+</div>
+
+<div class="campoFormulario">
+<label>Permisos:</label>
+<input type="text" id="editPermisos">
+</div>
+
+<div class="campoFormulario">
+<label>Estado:</label>
+<select id="editEstado">
+<option value="true">Activo</option>
+<option value="false">Inactivo</option>
+</select>
+</div>
+
+<button id="btnGuardarCambios">Guardar</button>
+<button onclick="document.getElementById('modalEditar').style.display='none'">Cancelar</button>
+
+</div>
+</div>
+
 </body>
 </html>
+```

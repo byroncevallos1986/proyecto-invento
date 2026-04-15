@@ -11,7 +11,8 @@ query,
 where,
 getDocs,
 doc,
-setDoc
+setDoc,
+updateDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* ELEMENTOS */
@@ -46,6 +47,16 @@ const menuNuevoUsuario = document.getElementById("menuNuevoUsuario");
 const menuActualizarUsuario = document.getElementById("menuActualizarUsuario");
 
 const menuLogout = document.getElementById("menuLogout");
+
+/* MODAL */
+const modalEditar = document.getElementById("modalEditar");
+const editId = document.getElementById("editId");
+const editNombres = document.getElementById("editNombres");
+const editApellidos = document.getElementById("editApellidos");
+const editEmail = document.getElementById("editEmail");
+const editPermisos = document.getElementById("editPermisos");
+const editEstado = document.getElementById("editEstado");
+const btnGuardarCambios = document.getElementById("btnGuardarCambios");
 
 /* SIDEBAR */
 function abrirSidebar(){
@@ -110,6 +121,11 @@ const fila = `
 <td>${data.email}</td>
 <td>${data.permisos}</td>
 <td>${estado}</td>
+<td>
+<button onclick="editarUsuario('${docu.id}','${data.nombres}','${data.apellidos}','${data.email}','${data.permisos}','${data.enabled}')">
+✏️
+</button>
+</td>
 </tr>
 `;
 
@@ -118,6 +134,43 @@ tbodyUsuarios.innerHTML += fila;
 });
 
 }
+
+/* ========================= */
+/* EDITAR USUARIO */
+/* ========================= */
+window.editarUsuario = (id,nombres,apellidos,email,permisos,enabled)=>{
+
+editId.value = id;
+editNombres.value = nombres;
+editApellidos.value = apellidos;
+editEmail.value = email;
+editPermisos.value = permisos;
+editEstado.value = enabled;
+
+modalEditar.style.display="flex";
+
+};
+
+/* GUARDAR CAMBIOS */
+btnGuardarCambios.onclick = async ()=>{
+
+const id = editId.value;
+
+await updateDoc(doc(db,"whitelist",id),{
+nombres: editNombres.value.trim(),
+apellidos: editApellidos.value.trim(),
+email: editEmail.value.trim(),
+permisos: editPermisos.value.trim(),
+enabled: editEstado.value === "true"
+});
+
+modalEditar.style.display="none";
+
+alert("Usuario actualizado");
+
+await cargarUsuarios();
+
+};
 
 /* ========================= */
 /* LOGIN */
