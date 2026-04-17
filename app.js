@@ -172,7 +172,7 @@ editNombres.value=nombres;
 editApellidos.value=apellidos;
 editEmail.value=email;
 editPermisos.value=permisos;
-editEstado.value=enabled;
+editEstado.checked = enabled === true || enabled === "true";
 modalEditar.style.display="flex";
 };
 
@@ -183,7 +183,7 @@ nombres: editNombres.value,
 apellidos: editApellidos.value,
 email: editEmail.value,
 permisos: editPermisos.value,
-enabled: editEstado.value==="true"
+enabled: editEstado.checked
 });
 modalEditar.style.display="none";
 alert("Usuario actualizado");

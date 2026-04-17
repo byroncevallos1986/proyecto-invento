@@ -308,26 +308,31 @@ color:white;
 <input type="hidden" id="editId">
 
 <div class="campoFormulario">
+<label>Nombres:</label>
 <input type="text" id="editNombres">
 </div>
 
 <div class="campoFormulario">
+<label>Apellidos:</label>
 <input type="text" id="editApellidos">
 </div>
 
 <div class="campoFormulario">
+<label>Email:</label>
 <input type="email" id="editEmail">
 </div>
 
 <div class="campoFormulario">
-<input type="text" id="editPermisos">
+<label>Permisos:</label>
+<select id="editPermisos">
+<option value="admin">admin</option>
+<option value="operador">operador</option>
+</select>
 </div>
 
 <div class="campoFormulario">
-<select id="editEstado">
-<option value="true">Activo</option>
-<option value="false">Inactivo</option>
-</select>
+<label>Estado:</label><br>
+<input type="checkbox" id="editEstado"> Activo
 </div>
 
 <button id="btnGuardarCambios">Guardar</button>
