@@ -79,7 +79,6 @@ tablaUsuarios.style.display="table";
 btnAbrirModalNuevo.style.display="block";
 
 await cargarUsuarios();
-
 };
 
 /* MODAL */
@@ -112,13 +111,17 @@ if(num > max) max = num;
 
 const nuevoId = "user" + String(max + 1).padStart(4,"0");
 
+const fechaActual = new Date();
+
 await setDoc(doc(db,"whitelist",nuevoId),{
 nombres,
 apellidos,
 email,
 permisos:"operador",
 enabled:true,
-creacion:new Date()
+creacion:fechaActual,
+fechaActualizacion:fechaActual,
+fechaInactivacion:fechaActual
 });
 
 alert("Usuario creado");
@@ -176,15 +179,70 @@ editEstado.checked = enabled === true || enabled === "true";
 modalEditar.style.display="flex";
 };
 
+/* VALIDAR ADMIN ACTIVO */
+async function validarAdminActivo(idActual, nuevoPermiso, nuevoEstado){
+
+const snapshot = await getDocs(collection(db,"whitelist"));
+
+let adminsActivos = 0;
+
+snapshot.forEach(docu=>{
+const data = docu.data();
+
+if(data.permisos === "admin" && data.enabled === true){
+adminsActivos++;
+}
+});
+
+/* Si el usuario actual es admin activo y se intenta quitar */
+const actualDoc = snapshot.docs.find(d=>d.id === idActual);
+const actualData = actualDoc.data();
+
+if(
+actualData.permisos === "admin" &&
+actualData.enabled === true &&
+(
+nuevoPermiso !== "admin" ||
+nuevoEstado === false
+)
+){
+adminsActivos--;
+}
+
+return adminsActivos > 0;
+}
+
 /* GUARDAR */
 btnGuardarCambios.onclick = async ()=>{
-await updateDoc(doc(db,"whitelist",editId.value),{
+
+const esValido = await validarAdminActivo(
+editId.value,
+editPermisos.value,
+editEstado.checked
+);
+
+if(!esValido){
+alert("Debe existir al menos un usuario ADMIN activo");
+return;
+}
+
+const fechaActual = new Date();
+
+const dataUpdate = {
 nombres: editNombres.value,
 apellidos: editApellidos.value,
 email: editEmail.value,
 permisos: editPermisos.value,
-enabled: editEstado.checked
-});
+enabled: editEstado.checked,
+fechaActualizacion: fechaActual
+};
+
+if(editEstado.checked === false){
+dataUpdate.fechaInactivacion = fechaActual;
+}
+
+await updateDoc(doc(db,"whitelist",editId.value), dataUpdate);
+
 modalEditar.style.display="none";
 alert("Usuario actualizado");
 await cargarUsuarios();
