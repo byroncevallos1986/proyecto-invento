@@ -17,7 +17,6 @@ where
 
 /* ELEMENTOS */
 const login = document.getElementById("login");
-const mensaje = document.getElementById("mensaje");
 const tituloPagina = document.getElementById("tituloPagina");
 
 const topbar = document.getElementById("topbar");
@@ -32,8 +31,6 @@ const tablaUsuarios = document.getElementById("tablaUsuarios");
 const tbodyUsuarios = document.getElementById("tbodyUsuarios");
 
 const menuAdministracion = document.getElementById("menuAdministracion");
-const submenuAdministracion = document.getElementById("submenuAdministracion");
-const menuActualizarUsuario = document.getElementById("menuActualizarUsuario");
 const menuLogout = document.getElementById("menuLogout");
 
 /* MODALES */
@@ -41,7 +38,6 @@ const modalNuevoUsuario = document.getElementById("modalNuevoUsuario");
 const modalEditar = document.getElementById("modalEditar");
 
 const btnAbrirModalNuevo = document.getElementById("btnAbrirModalNuevo");
-const cerrarModalNuevo = document.getElementById("cerrarModalNuevo");
 const btnCancelarModal = document.getElementById("btnCancelarModal");
 const btnCrearUsuarioModal = document.getElementById("btnCrearUsuarioModal");
 
@@ -63,27 +59,22 @@ menuToggle.onclick=()=>{
 sidebar.classList.toggle("active");
 overlay.classList.toggle("active");
 };
+
 overlay.onclick=()=>{
 sidebar.classList.remove("active");
 overlay.classList.remove("active");
 };
 
-/* MENÚ */
-menuAdministracion.onclick=()=>{
-submenuAdministracion.classList.toggle("active");
-};
-
-menuActualizarUsuario.onclick=async ()=>{
+/* ADMINISTRACIÓN (SIN SUBMENÚ) */
+menuAdministracion.onclick=async ()=>{
 tituloPagina.innerHTML="Administración de Usuarios";
 tablaUsuarios.style.display="table";
 btnAbrirModalNuevo.style.display="block";
-
 await cargarUsuarios();
 };
 
 /* MODAL */
 btnAbrirModalNuevo.onclick=()=> modalNuevoUsuario.style.display="flex";
-cerrarModalNuevo.onclick=()=> modalNuevoUsuario.style.display="none";
 btnCancelarModal.onclick=()=> modalNuevoUsuario.style.display="none";
 
 /* CREAR */
@@ -92,14 +83,6 @@ btnCrearUsuarioModal.onclick = async ()=>{
 const nombres = modalNombres.value.trim();
 const apellidos = modalApellidos.value.trim();
 const email = modalEmail.value.trim();
-
-const regex = /^[A-Za-zÁÉÍÓÚÑáéíóúñ\s]+$/;
-const regexEmail = /^[a-zA-Z0-9._%+-]+@gmail\.com$/;
-
-if(!regex.test(nombres) || !regex.test(apellidos) || !regexEmail.test(email)){
-alert("Datos inválidos");
-return;
-}
 
 const snapshot = await getDocs(collection(db,"whitelist"));
 
@@ -128,14 +111,10 @@ alert("Usuario creado");
 
 modalNuevoUsuario.style.display="none";
 
-modalNombres.value="";
-modalApellidos.value="";
-modalEmail.value="";
-
 await cargarUsuarios();
 };
 
-/* CARGAR USUARIOS */
+/* CARGAR */
 async function cargarUsuarios(){
 
 tbodyUsuarios.innerHTML="";
@@ -143,12 +122,7 @@ tbodyUsuarios.innerHTML="";
 const snapshot = await getDocs(collection(db,"whitelist"));
 
 snapshot.forEach(docu=>{
-
 const data = docu.data();
-
-const estado = data.enabled ? 
-'<span class="estado-activo">Activo</span>' :
-'<span class="estado-inactivo">Inactivo</span>';
 
 const fila = `
 <tr>
@@ -156,7 +130,7 @@ const fila = `
 <td>${data.apellidos}</td>
 <td>${data.email}</td>
 <td>${data.permisos}</td>
-<td>${estado}</td>
+<td>${data.enabled ? "Activo" : "Inactivo"}</td>
 <td>
 <button onclick="editarUsuario('${docu.id}','${data.nombres}','${data.apellidos}','${data.email}','${data.permisos}','${data.enabled}')">✏️</button>
 </td>
@@ -175,73 +149,21 @@ editNombres.value=nombres;
 editApellidos.value=apellidos;
 editEmail.value=email;
 editPermisos.value=permisos;
-editEstado.checked = enabled === true || enabled === "true";
+editEstado.checked = enabled;
 modalEditar.style.display="flex";
 };
-
-/* VALIDAR ADMIN ACTIVO */
-async function validarAdminActivo(idActual, nuevoPermiso, nuevoEstado){
-
-const snapshot = await getDocs(collection(db,"whitelist"));
-
-let adminsActivos = 0;
-
-snapshot.forEach(docu=>{
-const data = docu.data();
-
-if(data.permisos === "admin" && data.enabled === true){
-adminsActivos++;
-}
-});
-
-/* Si el usuario actual es admin activo y se intenta quitar */
-const actualDoc = snapshot.docs.find(d=>d.id === idActual);
-const actualData = actualDoc.data();
-
-if(
-actualData.permisos === "admin" &&
-actualData.enabled === true &&
-(
-nuevoPermiso !== "admin" ||
-nuevoEstado === false
-)
-){
-adminsActivos--;
-}
-
-return adminsActivos > 0;
-}
 
 /* GUARDAR */
 btnGuardarCambios.onclick = async ()=>{
 
-const esValido = await validarAdminActivo(
-editId.value,
-editPermisos.value,
-editEstado.checked
-);
-
-if(!esValido){
-alert("Debe existir al menos un usuario ADMIN activo");
-return;
-}
-
-const fechaActual = new Date();
-
-const dataUpdate = {
+await updateDoc(doc(db,"whitelist",editId.value),{
 nombres: editNombres.value,
 apellidos: editApellidos.value,
 email: editEmail.value,
 permisos: editPermisos.value,
 enabled: editEstado.checked,
-fechaActualizacion: fechaActual
-};
-
-if(editEstado.checked === false){
-dataUpdate.fechaInactivacion = fechaActual;
-}
-
-await updateDoc(doc(db,"whitelist",editId.value), dataUpdate);
+fechaActualizacion: new Date()
+});
 
 modalEditar.style.display="none";
 alert("Usuario actualizado");

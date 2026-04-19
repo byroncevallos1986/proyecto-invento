@@ -106,26 +106,6 @@ font-size:16px;
 background:#334155;
 }
 
-.submenu{
-display:none;
-flex-direction:column;
-background:#334155;
-}
-
-.submenu.active{
-display:flex;
-}
-
-.submenu-item{
-padding:12px 15px 12px 40px;
-cursor:pointer;
-font-size:14px;
-}
-
-.submenu-item:hover{
-background:#475569;
-}
-
 /* CONTENT */
 #content{
 flex:1;
@@ -182,8 +162,7 @@ width:400px;
 border-radius:10px;
 }
 
-/* ===== NUEVO DISEÑO MODAL ===== */
-
+/* MODAL FORM */
 .modal-form{
 width:420px;
 padding:25px;
@@ -195,11 +174,6 @@ display:flex;
 justify-content:space-between;
 align-items:center;
 margin-bottom:15px;
-}
-
-.modal-header h3{
-margin:0;
-font-size:20px;
 }
 
 .close-btn{
@@ -214,44 +188,16 @@ display:flex;
 flex-direction:column;
 }
 
-.form-group label{
-font-size:14px;
-margin-bottom:5px;
-color:#334155;
-}
-
 .input-form{
 padding:10px;
 border-radius:10px;
 border:1px solid #cbd5e1;
-font-size:14px;
-outline:none;
-}
-
-.input-form:focus{
-border-color:#2563eb;
-box-shadow:0 0 0 2px rgba(37,99,235,0.2);
-}
-
-.form-group-checkbox{
-display:flex;
-align-items:center;
-gap:8px;
-margin:15px 0;
-font-size:14px;
 }
 
 .form-actions{
 display:flex;
-justify-content:space-between;
-margin-top:20px;
 gap:10px;
-}
-
-.btn-secundario{
-background:#e5e7eb;
-color:#1e293b;
-flex:1;
+margin-top:20px;
 }
 
 button{
@@ -264,7 +210,10 @@ cursor:pointer;
 .btn-primario{
 background:#2563eb;
 color:white;
-flex:1;
+}
+
+.btn-secundario{
+background:#e5e7eb;
 }
 
 </style>
@@ -293,10 +242,6 @@ flex:1;
 
 <div class="menu" id="menuAdministracion">⚙️ Administración</div>
 
-<div class="submenu" id="submenuAdministracion">
-<div class="submenu-item" id="menuActualizarUsuario">✏️ Actualizar Usuario</div>
-</div>
-
 <div class="menu" id="menuLogout">🚪 Logout</div>
 
 </div>
@@ -304,13 +249,11 @@ flex:1;
 <!-- CONTENT -->
 <div id="content">
 
-<div style="display:flex; justify-content:space-between; align-items:center;">
 <h1 id="tituloPagina">INVENTO</h1>
 
 <button id="btnAbrirModalNuevo" class="btn-primario" style="display:none;">
 ➕ Nuevo Usuario
 </button>
-</div>
 
 <table id="tablaUsuarios">
 <thead>
@@ -335,82 +278,40 @@ flex:1;
 <div id="modalNuevoUsuario" class="modal">
 <div class="modal-content">
 
-<div style="display:flex; justify-content:space-between;">
 <h3>Nuevo Usuario</h3>
-<span id="cerrarModalNuevo">✖</span>
-</div>
 
-<div class="campoFormulario">
-<label>Nombres *</label>
-<input type="text" id="modalNombres">
-</div>
+<input type="text" id="modalNombres" placeholder="Nombres">
+<input type="text" id="modalApellidos" placeholder="Apellidos">
+<input type="email" id="modalEmail" placeholder="Email">
 
-<div class="campoFormulario">
-<label>Apellidos *</label>
-<input type="text" id="modalApellidos">
-</div>
-
-<div class="campoFormulario">
-<label>Email *</label>
-<input type="email" id="modalEmail">
-</div>
-
-<div style="display:flex; justify-content:space-between;">
+<button id="btnCrearUsuarioModal">Crear</button>
 <button id="btnCancelarModal">Cancelar</button>
-<button id="btnCrearUsuarioModal" class="btn-primario">Crear Usuario</button>
-</div>
 
 </div>
 </div>
 
-<!-- MODAL EDITAR (REDISEÑADO) -->
+<!-- MODAL EDITAR -->
 <div id="modalEditar" class="modal">
 <div class="modal-content modal-form">
 
-<div class="modal-header">
-  <h3>Actualizar Usuario</h3>
-  <span onclick="document.getElementById('modalEditar').style.display='none'" class="close-btn">✖</span>
-</div>
+<h3>Actualizar Usuario</h3>
 
 <input type="hidden" id="editId">
 
-<div class="form-group">
-<label>Nombres *</label>
-<input type="text" id="editNombres" class="input-form">
-</div>
+<input type="text" id="editNombres">
+<input type="text" id="editApellidos">
+<input type="email" id="editEmail">
 
-<div class="form-group">
-<label>Apellidos *</label>
-<input type="text" id="editApellidos" class="input-form">
-</div>
-
-<div class="form-group">
-<label>Email *</label>
-<input type="email" id="editEmail" class="input-form">
-</div>
-
-<div class="form-group">
-<label>Permisos</label>
-<select id="editPermisos" class="input-form">
+<select id="editPermisos">
 <option value="admin">Administrador</option>
 <option value="operador">Operador</option>
 </select>
-</div>
 
-<div class="form-group-checkbox">
-<input type="checkbox" id="editEstado">
-<label for="editEstado">Usuario activo</label>
-</div>
+<label>
+<input type="checkbox" id="editEstado"> Activo
+</label>
 
-<div class="form-actions">
-<button onclick="document.getElementById('modalEditar').style.display='none'" class="btn-secundario">
-Cancelar
-</button>
-
-<button id="btnGuardarCambios" class="btn-primario">
-Actualizar
-</button>
-</div>
+<button id="btnGuardarCambios">Actualizar</button>
 
 </div>
 </div>
