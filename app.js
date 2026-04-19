@@ -70,6 +70,11 @@ menuAdministracion.onclick=async ()=>{
 tituloPagina.innerHTML="Administración de Usuarios";
 tablaUsuarios.style.display="table";
 btnAbrirModalNuevo.style.display="block";
+
+/* NUEVO: cerrar sidebar */
+sidebar.classList.remove("active");
+overlay.classList.remove("active");
+
 await cargarUsuarios();
 };
 
