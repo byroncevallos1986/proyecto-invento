@@ -189,11 +189,22 @@ where("enabled","==",true)
 const querySnapshot = await getDocs(q);
 
 if(!querySnapshot.empty){
+
+const userData = querySnapshot.docs[0].data();
+
 login.style.display="none";
 topbar.style.display="flex";
 
 userPhotoTop.src=user.photoURL;
 userEmailTop.innerText=user.email;
+
+/* 🔹 CONTROL DE MENÚ POR PERMISOS */
+if(userData.permisos === "operador"){
+menuAdministracion.style.display = "none";
+}else{
+menuAdministracion.style.display = "block";
+}
+
 }
 };
 
