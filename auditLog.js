@@ -1,5 +1,9 @@
 import { db } from "./firebase.js";
-import { collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+import {
+collection,
+addDoc
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js"; // ✅ MISMA VERSIÓN
 
 export async function registrarAuditLog(log) {
     try {
