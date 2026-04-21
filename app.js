@@ -1,4 +1,5 @@
 import { auth, provider, db } from "./firebase.js";
+import { registrarAuditLog } from "./auditLog.js";
 
 import {
 signInWithPopup,
@@ -14,6 +15,9 @@ updateDoc,
 query,
 where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+/* USUARIO ACTUAL (ACTOR) */
+let usuarioActual = null;
 
 /* ELEMENTOS */
 const login = document.getElementById("login");
@@ -65,13 +69,12 @@ sidebar.classList.remove("active");
 overlay.classList.remove("active");
 };
 
-/* ADMINISTRACIÓN (SIN SUBMENÚ) */
+/* ADMINISTRACIÓN */
 menuAdministracion.onclick=async ()=>{
 tituloPagina.innerHTML="Administración de Usuarios";
 tablaUsuarios.style.display="table";
 btnAbrirModalNuevo.style.display="block";
 
-/* NUEVO: cerrar sidebar */
 sidebar.classList.remove("active");
 overlay.classList.remove("active");
 
@@ -82,12 +85,14 @@ await cargarUsuarios();
 btnAbrirModalNuevo.onclick=()=> modalNuevoUsuario.style.display="flex";
 btnCancelarModal.onclick=()=> modalNuevoUsuario.style.display="none";
 
-/* CREAR */
+/* CREAR USUARIO */
 btnCrearUsuarioModal.onclick = async ()=>{
 
 const nombres = modalNombres.value.trim();
 const apellidos = modalApellidos.value.trim();
 const email = modalEmail.value.trim();
+
+try{
 
 const snapshot = await getDocs(collection(db,"whitelist"));
 
@@ -112,11 +117,72 @@ fechaActualizacion:fechaActual,
 fechaInactivacion:fechaActual
 });
 
+/* 🔥 AUDIT LOG SUCCESS */
+await registrarAuditLog({
+timestamp: new Date().toISOString(),
+accion: "CREATE_USER",
+modulo: "Administracion",
+descripcion: "Creación de nuevo usuario",
+
+actor: usuarioActual,
+
+recurso: {
+tipo: "usuario",
+id: nuevoId,
+email: email
+},
+
+cambios: {
+despues: {
+nombres,
+apellidos,
+email,
+permisos:"operador",
+enabled:true
+}
+},
+
+origenCambio: "manual",
+resultado: "SUCCESS"
+});
+
 alert("Usuario creado");
 
 modalNuevoUsuario.style.display="none";
-
 await cargarUsuarios();
+
+}catch(error){
+
+/* 🔥 AUDIT LOG ERROR */
+await registrarAuditLog({
+timestamp: new Date().toISOString(),
+accion: "CREATE_USER",
+modulo: "Administracion",
+descripcion: "Error al crear usuario",
+
+actor: usuarioActual,
+
+recurso: {
+tipo: "usuario",
+id: null,
+email: email
+},
+
+cambios: {
+despues: {
+nombres,
+apellidos,
+email
+}
+},
+
+origenCambio: "manual",
+resultado: "ERROR"
+});
+
+console.error(error);
+alert("Error al crear usuario");
+}
 };
 
 /* CARGAR */
@@ -192,13 +258,20 @@ if(!querySnapshot.empty){
 
 const userData = querySnapshot.docs[0].data();
 
+/* 🔥 DEFINIR ACTOR */
+usuarioActual = {
+uid: querySnapshot.docs[0].id,
+email: user.email,
+permisos: userData.permisos
+};
+
 login.style.display="none";
 topbar.style.display="flex";
 
 userPhotoTop.src=user.photoURL;
 userEmailTop.innerText=user.email;
 
-/* 🔹 CONTROL DE MENÚ POR PERMISOS */
+/* CONTROL MENÚ */
 if(userData.permisos === "operador"){
 menuAdministracion.style.display = "none";
 }else{
