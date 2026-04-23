@@ -117,65 +117,34 @@ fechaActualizacion:fechaActual,
 fechaInactivacion:fechaActual
 });
 
-/* 🔥 AUDIT LOG SUCCESS */
+/* AUDIT LOG CREATE */
 await registrarAuditLog({
 timestamp: new Date().toISOString(),
 accion: "CREATE_USER",
 modulo: "Administracion",
 descripcion: "Creación de nuevo usuario",
-
 actor: usuarioActual,
-
-recurso: {
-tipo: "usuario",
-id: nuevoId,
-email: email
-},
-
+recurso: { tipo: "usuario", id: nuevoId, email },
 cambios: {
-despues: {
-nombres,
-apellidos,
-email,
-permisos:"operador",
-enabled:true
-}
+despues: { nombres, apellidos, email, permisos:"operador", enabled:true }
 },
-
 origenCambio: "manual",
 resultado: "SUCCESS"
 });
 
 alert("Usuario creado");
-
 modalNuevoUsuario.style.display="none";
 await cargarUsuarios();
 
 }catch(error){
 
-/* 🔥 AUDIT LOG ERROR */
 await registrarAuditLog({
 timestamp: new Date().toISOString(),
 accion: "CREATE_USER",
 modulo: "Administracion",
 descripcion: "Error al crear usuario",
-
 actor: usuarioActual,
-
-recurso: {
-tipo: "usuario",
-id: null,
-email: email
-},
-
-cambios: {
-despues: {
-nombres,
-apellidos,
-email
-}
-},
-
+recurso: { tipo: "usuario", id: null, email },
 origenCambio: "manual",
 resultado: "ERROR"
 });
@@ -187,9 +156,7 @@ alert("Error al crear usuario");
 
 /* CARGAR */
 async function cargarUsuarios(){
-
 tbodyUsuarios.innerHTML="";
-
 const snapshot = await getDocs(collection(db,"whitelist"));
 
 snapshot.forEach(docu=>{
@@ -209,7 +176,6 @@ const fila = `
 `;
 
 tbodyUsuarios.innerHTML += fila;
-
 });
 }
 
@@ -224,21 +190,84 @@ editEstado.checked = enabled;
 modalEditar.style.display="flex";
 };
 
-/* GUARDAR */
+/* 🔥 GUARDAR (CON AUDIT LOG COMPLETO) */
 btnGuardarCambios.onclick = async ()=>{
 
-await updateDoc(doc(db,"whitelist",editId.value),{
+try{
+
+const snapshot = await getDocs(
+query(collection(db,"whitelist"), where("__name__","==",editId.value))
+);
+
+let datosAntes = null;
+snapshot.forEach(docu=> datosAntes = docu.data());
+
+const datosDespues = {
 nombres: editNombres.value,
 apellidos: editApellidos.value,
 email: editEmail.value,
 permisos: editPermisos.value,
-enabled: editEstado.checked,
+enabled: editEstado.checked
+};
+
+await updateDoc(doc(db,"whitelist",editId.value),{
+...datosDespues,
 fechaActualizacion: new Date()
+});
+
+let accion = "UPDATE_USER";
+let descripcion = "Actualización de datos de usuario";
+
+if(datosAntes.enabled !== datosDespues.enabled){
+accion = datosDespues.enabled ? "ENABLE_USER" : "DISABLE_USER";
+descripcion = datosDespues.enabled ? "Activación de usuario" : "Desactivación de usuario";
+}
+
+await registrarAuditLog({
+timestamp: new Date().toISOString(),
+accion,
+modulo: "Administracion",
+descripcion,
+actor: usuarioActual,
+recurso: {
+tipo: "usuario",
+id: editId.value,
+email: datosDespues.email
+},
+cambios: {
+antes: {
+nombres: datosAntes.nombres,
+apellidos: datosAntes.apellidos,
+email: datosAntes.email,
+permisos: datosAntes.permisos,
+enabled: datosAntes.enabled
+},
+despues: datosDespues
+},
+origenCambio: "manual",
+resultado: "SUCCESS"
 });
 
 modalEditar.style.display="none";
 alert("Usuario actualizado");
 await cargarUsuarios();
+
+}catch(error){
+
+await registrarAuditLog({
+timestamp: new Date().toISOString(),
+accion: "UPDATE_USER",
+modulo: "Administracion",
+descripcion: "Error al actualizar usuario",
+actor: usuarioActual,
+recurso: { tipo: "usuario", id: editId.value },
+origenCambio: "manual",
+resultado: "ERROR"
+});
+
+console.error(error);
+alert("Error al actualizar usuario");
+}
 };
 
 /* LOGIN */
@@ -258,7 +287,6 @@ if(!querySnapshot.empty){
 
 const userData = querySnapshot.docs[0].data();
 
-/* 🔥 DEFINIR ACTOR */
 usuarioActual = {
 uid: querySnapshot.docs[0].id,
 email: user.email,
@@ -271,7 +299,6 @@ topbar.style.display="flex";
 userPhotoTop.src=user.photoURL;
 userEmailTop.innerText=user.email;
 
-/* CONTROL MENÚ */
 if(userData.permisos === "operador"){
 menuAdministracion.style.display = "none";
 }else{
