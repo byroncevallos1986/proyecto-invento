@@ -16,13 +16,25 @@ query,
 where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* 🔥 FUNCIÓN FECHA ECUADOR */
+/* 🔥 FUNCIÓN FECHA ECUADOR CORRECTA */
 function obtenerFechaEcuador() {
   const ahora = new Date();
-  const ecuador = new Date(
-    ahora.toLocaleString("en-US", { timeZone: "America/Guayaquil" })
-  );
-  return ecuador.toISOString().replace("Z", "-05:00");
+
+  const formatter = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "America/Guayaquil",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  });
+
+  const parts = formatter.formatToParts(ahora);
+  const get = (type) => parts.find(p => p.type === type).value;
+
+  return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}:${get("second")}-05:00`;
 }
 
 /* USUARIO ACTUAL */
