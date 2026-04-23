@@ -16,7 +16,16 @@ query,
 where
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-/* USUARIO ACTUAL (ACTOR) */
+/* 🔥 FUNCIÓN FECHA ECUADOR */
+function obtenerFechaEcuador() {
+  const ahora = new Date();
+  const ecuador = new Date(
+    ahora.toLocaleString("en-US", { timeZone: "America/Guayaquil" })
+  );
+  return ecuador.toISOString().replace("Z", "-05:00");
+}
+
+/* USUARIO ACTUAL */
 let usuarioActual = null;
 
 /* ELEMENTOS */
@@ -103,7 +112,6 @@ if(num > max) max = num;
 });
 
 const nuevoId = "user" + String(max + 1).padStart(4,"0");
-
 const fechaActual = new Date();
 
 await setDoc(doc(db,"whitelist",nuevoId),{
@@ -117,9 +125,9 @@ fechaActualizacion:fechaActual,
 fechaInactivacion:fechaActual
 });
 
-/* AUDIT LOG CREATE */
+/* AUDIT LOG */
 await registrarAuditLog({
-timestamp: new Date().toISOString(),
+timestamp: obtenerFechaEcuador(),
 accion: "CREATE_USER",
 modulo: "Administracion",
 descripcion: "Creación de nuevo usuario",
@@ -139,7 +147,7 @@ await cargarUsuarios();
 }catch(error){
 
 await registrarAuditLog({
-timestamp: new Date().toISOString(),
+timestamp: obtenerFechaEcuador(),
 accion: "CREATE_USER",
 modulo: "Administracion",
 descripcion: "Error al crear usuario",
@@ -190,7 +198,7 @@ editEstado.checked = enabled;
 modalEditar.style.display="flex";
 };
 
-/* 🔥 GUARDAR (CON AUDIT LOG COMPLETO) */
+/* GUARDAR */
 btnGuardarCambios.onclick = async ()=>{
 
 try{
@@ -224,7 +232,7 @@ descripcion = datosDespues.enabled ? "Activación de usuario" : "Desactivación 
 }
 
 await registrarAuditLog({
-timestamp: new Date().toISOString(),
+timestamp: obtenerFechaEcuador(),
 accion,
 modulo: "Administracion",
 descripcion,
@@ -235,13 +243,7 @@ id: editId.value,
 email: datosDespues.email
 },
 cambios: {
-antes: {
-nombres: datosAntes.nombres,
-apellidos: datosAntes.apellidos,
-email: datosAntes.email,
-permisos: datosAntes.permisos,
-enabled: datosAntes.enabled
-},
+antes: datosAntes,
 despues: datosDespues
 },
 origenCambio: "manual",
@@ -255,7 +257,7 @@ await cargarUsuarios();
 }catch(error){
 
 await registrarAuditLog({
-timestamp: new Date().toISOString(),
+timestamp: obtenerFechaEcuador(),
 accion: "UPDATE_USER",
 modulo: "Administracion",
 descripcion: "Error al actualizar usuario",
@@ -299,11 +301,8 @@ topbar.style.display="flex";
 userPhotoTop.src=user.photoURL;
 userEmailTop.innerText=user.email;
 
-if(userData.permisos === "operador"){
-menuAdministracion.style.display = "none";
-}else{
-menuAdministracion.style.display = "block";
-}
+menuAdministracion.style.display =
+userData.permisos === "operador" ? "none" : "block";
 
 }
 };
