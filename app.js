@@ -134,7 +134,11 @@ permisos:"operador",
 enabled:true,
 creacion:fechaActual,
 fechaActualizacion:fechaActual,
-fechaInactivacion:fechaActual
+fechaInactivacion:fechaActual,
+
+/* 🔥 NUEVOS CAMPOS */
+anonimizado: false,
+fechaAnonimizacion: null
 });
 
 /* AUDIT LOG */
