@@ -132,7 +132,7 @@ apellidos,
 email,
 permisos:"operador",
 enabled:true,
-fechacreacion:fechaActual,
+fechaCreacion:fechaActual,
 fechaActualizacion:fechaActual,
 fechaInactivacion:null,
 
