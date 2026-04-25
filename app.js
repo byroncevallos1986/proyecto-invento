@@ -134,7 +134,7 @@ permisos:"operador",
 enabled:true,
 fechaCreacion:fechaActual,
 fechaActualizacion:fechaActual,
-fechaInactivacion:null,
+fechaInactivacion: null,
 
 /* 🔥 NUEVOS CAMPOS */
 anonimizado: false,
@@ -234,9 +234,21 @@ permisos: editPermisos.value,
 enabled: editEstado.checked
 };
 
+/* 🔥 NUEVA LÓGICA fechaInactivacion */
+let fechaInactivacionValor = datosAntes.fechaInactivacion || null;
+
+if (datosAntes.enabled === true && datosDespues.enabled === false) {
+  fechaInactivacionValor = obtenerFechaEcuador();
+}
+
+if (datosAntes.enabled === false && datosDespues.enabled === true) {
+  fechaInactivacionValor = null;
+}
+
 await updateDoc(doc(db,"whitelist",editId.value),{
 ...datosDespues,
-fechaActualizacion: new Date()
+fechaActualizacion: new Date(),
+fechaInactivacion: fechaInactivacionValor
 });
 
 let accion = "UPDATE_USER";
