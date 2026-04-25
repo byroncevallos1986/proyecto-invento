@@ -132,9 +132,9 @@ apellidos,
 email,
 permisos:"operador",
 enabled:true,
-creacion:fechaActual,
+fechacreacion:fechaActual,
 fechaActualizacion:fechaActual,
-fechaInactivacion:fechaActual,
+fechaInactivacion:null,
 
 /* 🔥 NUEVOS CAMPOS */
 anonimizado: false,
