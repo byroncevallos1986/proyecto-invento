@@ -1,0 +1,28 @@
+name: Anonimizar Usuarios
+
+on:
+  schedule:
+    - cron: '0 3 * * *' # Ejecuta todos los días (03:00 UTC)
+
+  workflow_dispatch: # Permite ejecución manual
+
+jobs:
+  anonimizar:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Clonar repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Instalar dependencias
+        run: npm install firebase-admin
+
+      - name: Ejecutar script
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node scripts/anonimizarUsuarios.js
