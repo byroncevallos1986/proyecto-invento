@@ -2,9 +2,9 @@ name: Anonimizar Usuarios
 
 on:
   schedule:
-    - cron: '0 3 * * *' # Ejecuta todos los días (03:00 UTC)
+    - cron: '0 6 * * *' # 01:00 AM Ecuador
 
-  workflow_dispatch: # Permite ejecución manual
+  workflow_dispatch:
 
 jobs:
   anonimizar:
@@ -12,12 +12,12 @@ jobs:
 
     steps:
       - name: Clonar repositorio
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Configurar Node.js
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: '18'
+          node-version: '20'
 
       - name: Instalar dependencias
         run: npm install firebase-admin
