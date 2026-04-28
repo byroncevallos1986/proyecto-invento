@@ -29,6 +29,30 @@ function obtenerFechaEcuador() {
   return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}:${get("second")}-05:00`;
 }
 
+/* 🔹 GENERAR TIMESTAMP (yyyymmddhhmmss) */
+function generarTimestamp() {
+  const ahora = new Date();
+
+  const yyyy = ahora.getFullYear();
+  const mm = String(ahora.getMonth() + 1).padStart(2, "0");
+  const dd = String(ahora.getDate()).padStart(2, "0");
+  const hh = String(ahora.getHours()).padStart(2, "0");
+  const min = String(ahora.getMinutes()).padStart(2, "0");
+  const ss = String(ahora.getSeconds()).padStart(2, "0");
+
+  return `${yyyy}${mm}${dd}${hh}${min}${ss}`;
+}
+
+/* 🔹 GENERAR STRING ALEATORIO */
+function generarRandom(length = 8) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
 async function anonimizarUsuarios() {
   try {
     console.log("Iniciando anonimización...");
@@ -75,8 +99,10 @@ async function anonimizarUsuarios() {
           email: null
         });
 
-        /* 🔥 AUDIT LOG */
-        await db.collection("audit_logs").add({
+        /* 🔥 AUDIT LOG (CON ID PERSONALIZADO) */
+        const docId = `${generarTimestamp()}_${generarRandom(8)}`;
+
+        await db.collection("audit_logs").doc(docId).set({
           timestamp: obtenerFechaEcuador(),
           accion: "ANONYMIZE_USER",
           modulo: "Administracion",
@@ -104,8 +130,10 @@ async function anonimizarUsuarios() {
 
     console.error("Error:", error);
 
-    /* 🔥 LOG ERROR GLOBAL */
-    await db.collection("audit_logs").add({
+    /* 🔥 AUDIT LOG ERROR (CON ID PERSONALIZADO) */
+    const docId = `${generarTimestamp()}_${generarRandom(8)}`;
+
+    await db.collection("audit_logs").doc(docId).set({
       timestamp: obtenerFechaEcuador(),
       accion: "ANONYMIZE_USER",
       modulo: "Administracion",
