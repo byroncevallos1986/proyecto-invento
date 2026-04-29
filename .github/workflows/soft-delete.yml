@@ -2,7 +2,7 @@ name: Soft Delete Usuarios
 
 on:
   schedule:
-    - cron: "0 3 * * *" # Ejecuta todos los días (UTC)
+    - cron: "0 3 * * *"
   workflow_dispatch:
 
 jobs:
@@ -11,12 +11,12 @@ jobs:
 
     steps:
       - name: Checkout código
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Instalar Node
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
-          node-version: "18"
+          node-version: "22"
 
       - name: Instalar dependencias
         run: npm install firebase-admin
