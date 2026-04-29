@@ -10,7 +10,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-/* 🔥 FUNCIÓN FECHA ECUADOR */
+/* 🔥 FUNCIÓN FECHA ECUADOR (ISO) */
 function obtenerFechaEcuador() {
   const ahora = new Date();
 
@@ -29,6 +29,42 @@ function obtenerFechaEcuador() {
   const get = (type) => parts.find(p => p.type === type).value;
 
   return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}:${get("second")}-05:00`;
+}
+
+/* 🔥 TIMESTAMP PARA ID (yyyymmddhhmmss) */
+function generarTimestamp() {
+  const ahora = new Date();
+
+  const formatter = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "America/Guayaquil",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  });
+
+  const parts = formatter.formatToParts(ahora);
+  const get = (type) => parts.find(p => p.type === type).value;
+
+  return `${get("year")}${get("month")}${get("day")}${get("hour")}${get("minute")}${get("second")}`;
+}
+
+/* 🔥 RANDOM PARA ID */
+function generarRandom(length = 8) {
+  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+  let result = "";
+  for (let i = 0; i < length; i++) {
+    result += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return result;
+}
+
+/* 🔥 GENERAR ID AUDIT LOG */
+function generarAuditLogId() {
+  return `${generarTimestamp()}_${generarRandom(8)}`;
 }
 
 async function ejecutarSoftDelete() {
@@ -61,12 +97,14 @@ async function ejecutarSoftDelete() {
         fechaEliminacion: obtenerFechaEcuador()
       });
 
-      // 🔹 AUDIT LOG
-      await db.collection("audit_logs").add({
+      // 🔹 AUDIT LOG SUCCESS
+      const auditId = generarAuditLogId();
+
+      await db.collection("audit_logs").doc(auditId).set({
         timestamp: obtenerFechaEcuador(),
         accion: "SOFT_DELETE_USER",
         modulo: "Automatizacion",
-        descripcion: "Soft delete automático por antigüedad (1825 días)",
+        descripcion: `Soft delete automático por antigüedad (${DIAS_SOFT_DELETE} días)`,
         actor: "github_actions",
         recurso: {
           tipo: "usuario",
@@ -82,7 +120,10 @@ async function ejecutarSoftDelete() {
 
       console.error("Error con usuario:", userId, error);
 
-      await db.collection("audit_logs").add({
+      // 🔹 AUDIT LOG ERROR
+      const auditIdError = generarAuditLogId();
+
+      await db.collection("audit_logs").doc(auditIdError).set({
         timestamp: obtenerFechaEcuador(),
         accion: "SOFT_DELETE_USER",
         modulo: "Automatizacion",
@@ -93,7 +134,8 @@ async function ejecutarSoftDelete() {
           id: userId
         },
         origenCambio: "automatico",
-        resultado: "ERROR"
+        resultado: "ERROR",
+        error: error.message
       });
     }
   }
