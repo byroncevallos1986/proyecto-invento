@@ -136,9 +136,13 @@ fechaCreacion:fechaActual,
 fechaActualizacion:fechaActual,
 fechaInactivacion: null,
 
-/* 🔥 NUEVOS CAMPOS */
+/* 🔥 CAMPOS ANONIMIZACION */
 anonimizado: false,
-fechaAnonimizacion: null
+fechaAnonimizacion: null,
+
+/* 🔥 CAMPOS ELIMINACION (SOFT-DELETE) */
+eliminado: false,
+fechaEliminacion: null
 });
 
 /* AUDIT LOG */
