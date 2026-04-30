@@ -70,7 +70,9 @@ async function anonimizarUsuarios() {
 
       if (!data.fechaInactivacion) continue;
 
-      const fechaInactiva = new Date(data.fechaInactivacion);
+      /* 🔥 SOPORTE TIMESTAMP FIRESTORE */
+      const fechaInactiva = data.fechaInactivacion.toDate();
+
       const diferenciaDias = (ahora - fechaInactiva) / (1000 * 60 * 60 * 24);
 
       if (diferenciaDias >= 15) {
