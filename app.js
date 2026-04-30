@@ -13,7 +13,8 @@ doc,
 setDoc,
 updateDoc,
 query,
-where
+where,
+Timestamp
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 /* 🔥 FUNCIÓN FECHA ECUADOR CORRECTA */
@@ -35,6 +36,11 @@ function obtenerFechaEcuador() {
   const get = (type) => parts.find(p => p.type === type).value;
 
   return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}:${get("second")}-05:00`;
+}
+
+/* 🔥 NUEVA FUNCIÓN TIMESTAMP ECUADOR */
+function obtenerTimestampEcuador() {
+  return Timestamp.now();
 }
 
 /* USUARIO ACTUAL */
@@ -242,7 +248,7 @@ enabled: editEstado.checked
 let fechaInactivacionValor = datosAntes.fechaInactivacion || null;
 
 if (datosAntes.enabled === true && datosDespues.enabled === false) {
-  fechaInactivacionValor = obtenerFechaEcuador();
+  fechaInactivacionValor = obtenerTimestampEcuador();
 }
 
 if (datosAntes.enabled === false && datosDespues.enabled === true) {
