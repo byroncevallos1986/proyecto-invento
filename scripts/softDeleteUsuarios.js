@@ -56,9 +56,13 @@ function generarTimestamp() {
 function generarRandom(length = 8) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
   let result = "";
+
   for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+    result += chars.charAt(
+      Math.floor(Math.random() * chars.length)
+    );
   }
+
   return result;
 }
 
@@ -91,10 +95,14 @@ async function ejecutarSoftDelete() {
 
     try {
 
+      /* 🔥 FECHA ELIMINACION TIMESTAMP */
+      const fechaEliminacionTimestamp =
+        admin.firestore.Timestamp.now();
+
       // 🔹 SOFT DELETE
       await docItem.ref.update({
         eliminado: true,
-        fechaEliminacion: obtenerFechaEcuador()
+        fechaEliminacion: fechaEliminacionTimestamp
       });
 
       // 🔹 AUDIT LOG SUCCESS
