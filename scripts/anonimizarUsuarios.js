@@ -46,18 +46,26 @@ function generarTimestamp() {
 /* 🔹 GENERAR STRING ALEATORIO */
 function generarRandom(length = 8) {
   const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
   let result = "";
+
   for (let i = 0; i < length; i++) {
-    result += chars.charAt(Math.floor(Math.random() * chars.length));
+    result += chars.charAt(
+      Math.floor(Math.random() * chars.length)
+    );
   }
+
   return result;
 }
 
 async function anonimizarUsuarios() {
+
   try {
+
     console.log("Iniciando anonimización...");
 
-    const snapshot = await db.collection("whitelist")
+    const snapshot = await db
+      .collection("whitelist")
       .where("enabled", "==", false)
       .where("anonimizado", "==", false)
       .get();
@@ -68,12 +76,34 @@ async function anonimizarUsuarios() {
 
       const data = docu.data();
 
-      if (!data.fechaInactivacion) continue;
+      if (!data.fechaInactivacion) {
+        console.log(`Usuario ${docu.id} sin fechaInactivacion`);
+        continue;
+      }
 
-      /* 🔥 SOPORTE TIMESTAMP FIRESTORE */
-      const fechaInactiva = data.fechaInactivacion.toDate();
+      /* 🔥 SOPORTE STRING Y TIMESTAMP */
+      let fechaInactiva = null;
 
-      const diferenciaDias = (ahora - fechaInactiva) / (1000 * 60 * 60 * 24);
+      if (
+        data.fechaInactivacion &&
+        typeof data.fechaInactivacion.toDate === "function"
+      ) {
+
+        /* Timestamp Firestore */
+        fechaInactiva = data.fechaInactivacion.toDate();
+
+      } else {
+
+        /* String antiguo */
+        fechaInactiva = new Date(data.fechaInactivacion);
+      }
+
+      const diferenciaDias =
+        (ahora - fechaInactiva) / (1000 * 60 * 60 * 24);
+
+      console.log(`Usuario: ${docu.id}`);
+      console.log(`Fecha Inactivación: ${fechaInactiva}`);
+      console.log(`Diferencia días: ${diferenciaDias}`);
 
       if (diferenciaDias >= 15) {
 
@@ -101,50 +131,76 @@ async function anonimizarUsuarios() {
           email: null
         });
 
+        console.log(`Usuario anonimizado: ${docu.id}`);
+
         /* 🔥 AUDIT LOG (CON ID PERSONALIZADO) */
-        const docId = `${generarTimestamp()}_${generarRandom(8)}`;
+        const docId =
+          `${generarTimestamp()}_${generarRandom(8)}`;
 
-        await db.collection("audit_logs").doc(docId).set({
-          timestamp: obtenerFechaEcuador(),
-          accion: "ANONYMIZE_USER",
-          modulo: "Administracion",
-          descripcion: "Anonimización automática por inactividad (15 días)",
-          actor: "SYSTEM",
+        await db
+          .collection("audit_logs")
+          .doc(docId)
+          .set({
 
-          recurso: {
-            tipo: "usuario",
-            id: docu.id
-          },
+            timestamp: obtenerFechaEcuador(),
 
-          cambios: {
-            antes: datosAntes,
-            despues: datosDespues
-          },
+            accion: "ANONYMIZE_USER",
 
-          origenCambio: "automatico",
-          resultado: "SUCCESS"
-        });
+            modulo: "Administracion",
+
+            descripcion:
+              "Anonimización automática por inactividad (15 días)",
+
+            actor: "SYSTEM",
+
+            recurso: {
+              tipo: "usuario",
+              id: docu.id
+            },
+
+            cambios: {
+              antes: datosAntes,
+              despues: datosDespues
+            },
+
+            origenCambio: "automatico",
+
+            resultado: "SUCCESS"
+          });
       }
     }
 
     console.log("Proceso finalizado.");
+
   } catch (error) {
 
     console.error("Error:", error);
 
     /* 🔥 AUDIT LOG ERROR (CON ID PERSONALIZADO) */
-    const docId = `${generarTimestamp()}_${generarRandom(8)}`;
+    const docId =
+      `${generarTimestamp()}_${generarRandom(8)}`;
 
-    await db.collection("audit_logs").doc(docId).set({
-      timestamp: obtenerFechaEcuador(),
-      accion: "ANONYMIZE_USER",
-      modulo: "Administracion",
-      descripcion: "Error en anonimización automática",
-      actor: "SYSTEM",
-      origenCambio: "automatico",
-      resultado: "ERROR",
-      detalleError: error.message
-    });
+    await db
+      .collection("audit_logs")
+      .doc(docId)
+      .set({
+
+        timestamp: obtenerFechaEcuador(),
+
+        accion: "ANONYMIZE_USER",
+
+        modulo: "Administracion",
+
+        descripcion: "Error en anonimización automática",
+
+        actor: "SYSTEM",
+
+        origenCambio: "automatico",
+
+        resultado: "ERROR",
+
+        detalleError: error.message
+      });
   }
 }
 
