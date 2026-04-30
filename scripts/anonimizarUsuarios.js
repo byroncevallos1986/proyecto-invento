@@ -112,11 +112,15 @@ async function anonimizarUsuarios() {
         /* 🔥 DATOS ANTES */
         const datosAntes = { ...data };
 
+        /* 🔥 FECHA ANONIMIZACION TIMESTAMP */
+        const fechaAnonimizacionTimestamp =
+          admin.firestore.Timestamp.now();
+
         /* 🔥 DATOS DESPUÉS */
         const datosDespues = {
           ...data,
           anonimizado: true,
-          fechaAnonimizacion: obtenerFechaEcuador(),
+          fechaAnonimizacion: fechaAnonimizacionTimestamp,
           nombres: "ANONIMIZADO",
           apellidos: "ANONIMIZADO",
           email: null
@@ -125,7 +129,7 @@ async function anonimizarUsuarios() {
         /* 🔥 UPDATE USUARIO */
         await docu.ref.update({
           anonimizado: true,
-          fechaAnonimizacion: datosDespues.fechaAnonimizacion,
+          fechaAnonimizacion: fechaAnonimizacionTimestamp,
           nombres: "ANONIMIZADO",
           apellidos: "ANONIMIZADO",
           email: null
