@@ -18,16 +18,32 @@ jobs:
 
     steps:
 
+      # =====================================
+      # CHECKOUT
+      # =====================================
+
       - name: Checkout repositorio
         uses: actions/checkout@v4
+
+      # =====================================
+      # NODE
+      # =====================================
 
       - name: Configurar Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 24
 
+      # =====================================
+      # DEPENDENCIAS
+      # =====================================
+
       - name: Instalar dependencias
         run: npm install
+
+      # =====================================
+      # HARD DELETE
+      # =====================================
 
       - name: Ejecutar hard delete
         env:
