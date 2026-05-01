@@ -1,0 +1,31 @@
+name: Hard Delete Usuarios
+
+on:
+  schedule:
+    - cron: "0 5 * * *"
+
+  workflow_dispatch:
+
+jobs:
+
+  hard-delete:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Checkout repositorio
+        uses: actions/checkout@v4
+
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Instalar dependencias
+        run: npm install
+
+      - name: Ejecutar hard delete
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node scripts/hardDeleteUsuarios.js
