@@ -1,9 +1,10 @@
 const admin = require("firebase-admin");
+
 const {
   DIAS_HARD_DELETE
 } = require("../config/lifecycleConfig");
 
-// 🔐 Credenciales desde GitHub Secrets
+// 🔐 Credenciales desde GitHub Secret
 const serviceAccount = JSON.parse(
   process.env.FIREBASE_SERVICE_ACCOUNT
 );
@@ -16,6 +17,7 @@ const db = admin.firestore();
 
 /* 🔥 FECHA ECUADOR */
 function obtenerFechaEcuador() {
+
   return new Date(
     new Date().toLocaleString("en-US", {
       timeZone: "America/Guayaquil"
@@ -42,49 +44,103 @@ async function hardDeleteUsuarios() {
     console.log("Fecha actual:", fechaActual);
     console.log("Fecha límite:", fechaLimite);
 
-    // 🔎 Buscar usuarios eliminados
+    // =========================================
+    // BUSCAR USUARIOS ELIMINADOS
+    // =========================================
+
     const usuariosSnapshot = await db
       .collection("usuarios")
       .where("eliminado", "==", true)
+      .where("fechaEliminacion", "<=", fechaLimite)
       .get();
 
     if (usuariosSnapshot.empty) {
 
       console.log(
-        "No existen usuarios soft-delete"
+        "No existen usuarios para hard-delete"
       );
 
       return;
     }
 
+    console.log(
+      `Usuarios encontrados: ${usuariosSnapshot.size}`
+    );
+
+    // =========================================
+    // RECORRER USUARIOS
+    // =========================================
+
     for (const doc of usuariosSnapshot.docs) {
 
       const usuario = doc.data();
 
-      const fechaEliminacion =
-        usuario.fechaEliminacion?.toDate
-          ? usuario.fechaEliminacion.toDate()
-          : null;
+      console.log("------------------------------------");
+      console.log("Procesando usuario:", doc.id);
+
+      let fechaEliminacion = null;
+
+      // 🔥 Timestamp Firestore
+      if (
+        usuario.fechaEliminacion &&
+        typeof usuario.fechaEliminacion.toDate === "function"
+      ) {
+
+        fechaEliminacion =
+          usuario.fechaEliminacion.toDate();
+
+      }
+
+      // 🔥 String
+      else if (
+        typeof usuario.fechaEliminacion === "string"
+      ) {
+
+        fechaEliminacion =
+          new Date(usuario.fechaEliminacion);
+      }
+
+      // 🔥 Date
+      else if (
+        usuario.fechaEliminacion instanceof Date
+      ) {
+
+        fechaEliminacion =
+          usuario.fechaEliminacion;
+      }
+
+      console.log(
+        "fechaEliminacion:",
+        fechaEliminacion
+      );
+
+      console.log(
+        "fechaLimite:",
+        fechaLimite
+      );
+
+      // =========================================
+      // VALIDAR FECHA
+      // =========================================
 
       if (!fechaEliminacion) {
 
         console.log(
-          `Usuario ${doc.id} sin fechaEliminacion`
+          `Usuario ${doc.id} sin fechaEliminacion válida`
         );
 
         continue;
       }
 
-      // ⏳ Validar antigüedad
       if (fechaEliminacion <= fechaLimite) {
 
         console.log(
-          `Eliminando usuario: ${doc.id}`
+          `Eliminando usuario definitivamente: ${doc.id}`
         );
 
-        // ====================================
+        // =========================================
         // ELIMINAR AUDIT LOGS
-        // ====================================
+        // =========================================
 
         const auditLogsSnapshot = await db
           .collection("audit_logs")
@@ -93,16 +149,21 @@ async function hardDeleteUsuarios() {
 
         if (!auditLogsSnapshot.empty) {
 
+          console.log(
+            `Audit logs encontrados: ${auditLogsSnapshot.size}`
+          );
+
           const batch = db.batch();
 
           auditLogsSnapshot.docs.forEach((auditDoc) => {
+
             batch.delete(auditDoc.ref);
           });
 
           await batch.commit();
 
           console.log(
-            `Audit logs eliminados: ${auditLogsSnapshot.size}`
+            "Audit logs eliminados correctamente"
           );
 
         } else {
@@ -112,9 +173,30 @@ async function hardDeleteUsuarios() {
           );
         }
 
-        // ====================================
-        // ELIMINAR USUARIO
-        // ====================================
+        // =========================================
+        // ELIMINAR FIREBASE AUTH
+        // =========================================
+
+        try {
+
+          await admin.auth().deleteUser(doc.id);
+
+          console.log(
+            "Usuario eliminado de Firebase Authentication"
+          );
+
+        } catch (authError) {
+
+          console.log(
+            "No se pudo eliminar usuario de Firebase Auth:"
+          );
+
+          console.log(authError.message);
+        }
+
+        // =========================================
+        // ELIMINAR DOCUMENTO FIRESTORE
+        // =========================================
 
         await db
           .collection("usuarios")
@@ -122,7 +204,7 @@ async function hardDeleteUsuarios() {
           .delete();
 
         console.log(
-          `Usuario eliminado definitivamente: ${doc.id}`
+          `Usuario eliminado de Firestore: ${doc.id}`
         );
 
       } else {
@@ -140,7 +222,7 @@ async function hardDeleteUsuarios() {
   } catch (error) {
 
     console.error(
-      "Error en hard delete:",
+      "ERROR HARD DELETE:",
       error
     );
 
