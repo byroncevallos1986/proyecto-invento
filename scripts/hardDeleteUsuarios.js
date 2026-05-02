@@ -49,7 +49,7 @@ async function hardDeleteUsuarios() {
     // =========================================
 
     const usuariosSnapshot = await db
-      .collection("usuarios")
+      .collection("whitelist")
       .where("eliminado", "==", true)
       .where("fechaEliminacion", "<=", fechaLimite)
       .get();
@@ -199,7 +199,7 @@ async function hardDeleteUsuarios() {
         // =========================================
 
         await db
-          .collection("usuarios")
+          .collection("whitelist")
           .doc(doc.id)
           .delete();
 
