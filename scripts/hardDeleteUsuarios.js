@@ -144,7 +144,7 @@ async function hardDeleteUsuarios() {
 
         const auditLogsSnapshot = await db
           .collection("audit_logs")
-          .where("uid", "==", doc.id)
+          .where("actor.uid", "==", doc.id)
           .get();
 
         if (!auditLogsSnapshot.empty) {
