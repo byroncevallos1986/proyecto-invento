@@ -1,4 +1,5 @@
 const admin = require("firebase-admin");
+const { DIAS_ANOM } = require("../config/lifecycleConfig");
 
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
@@ -105,7 +106,7 @@ async function anonimizarUsuarios() {
       console.log(`Fecha Inactivación: ${fechaInactiva}`);
       console.log(`Diferencia días: ${diferenciaDias}`);
 
-      if (diferenciaDias >= 15) {
+      if (diferenciaDias >= DIAS_ANOM) {
 
         console.log(`Anonimizando usuario: ${docu.id}`);
 
@@ -153,7 +154,7 @@ async function anonimizarUsuarios() {
             modulo: "Administracion",
 
             descripcion:
-              "Anonimización automática por inactividad (15 días)",
+              `Anonimización automática por inactividad (${DIAS_ANOM} días)`,
 
             actor: "SYSTEM",
 
