@@ -190,10 +190,19 @@ alert("Error al crear usuario");
 
 /* CARGAR */
 async function cargarUsuarios(){
+
 tbodyUsuarios.innerHTML="";
-const snapshot = await getDocs(collection(db,"whitelist"));
+
+/* 🔥 FILTRAR USUARIOS NO ANONIMIZADOS */
+const q = query(
+collection(db,"whitelist"),
+where("anonimizado","==",false)
+);
+
+const snapshot = await getDocs(q);
 
 snapshot.forEach(docu=>{
+
 const data = docu.data();
 
 const fila = `
@@ -210,7 +219,9 @@ const fila = `
 `;
 
 tbodyUsuarios.innerHTML += fila;
+
 });
+
 }
 
 /* EDITAR */
