@@ -117,9 +117,44 @@ btnCrearUsuarioModal.onclick = async ()=>{
 
 const nombres = modalNombres.value.trim();
 const apellidos = modalApellidos.value.trim();
-const email = modalEmail.value.trim();
+const email = modalEmail.value.trim().toLowerCase();
 
 try{
+
+/* 🔥 VALIDAR SI EXISTE EN WHITELIST */
+const whitelistQuery = query(
+collection(db,"whitelist"),
+where("email","==",email)
+);
+
+const whitelistSnapshot = await getDocs(whitelistQuery);
+
+/* 🔥 VALIDAR SI EXISTE EN AUDIT LOGS CREATE_USER */
+const auditQuery = query(
+collection(db,"audit_logs"),
+where("accion","==","CREATE_USER")
+);
+
+const auditSnapshot = await getDocs(auditQuery);
+
+let existeEnAuditLogs = false;
+
+auditSnapshot.forEach(docu=>{
+const data = docu.data();
+
+if(
+data?.recurso?.email &&
+data.recurso.email.toLowerCase() === email
+){
+existeEnAuditLogs = true;
+}
+});
+
+/* 🔥 VALIDACIÓN */
+if(!whitelistSnapshot.empty || existeEnAuditLogs){
+alert("El usuario ya se encuentra registrado");
+return;
+}
 
 const snapshot = await getDocs(collection(db,"whitelist"));
 
