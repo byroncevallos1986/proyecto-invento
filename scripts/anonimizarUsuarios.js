@@ -30,18 +30,26 @@ function obtenerFechaEcuador() {
   return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}:${get("second")}-05:00`;
 }
 
-/* 🔹 GENERAR TIMESTAMP (yyyymmddhhmmss) */
+/* 🔹 GENERAR TIMESTAMP ECUADOR (yyyymmddhhmmss) */
 function generarTimestamp() {
+
   const ahora = new Date();
 
-  const yyyy = ahora.getFullYear();
-  const mm = String(ahora.getMonth() + 1).padStart(2, "0");
-  const dd = String(ahora.getDate()).padStart(2, "0");
-  const hh = String(ahora.getHours()).padStart(2, "0");
-  const min = String(ahora.getMinutes()).padStart(2, "0");
-  const ss = String(ahora.getSeconds()).padStart(2, "0");
+  const formatter = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "America/Guayaquil",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  });
 
-  return `${yyyy}${mm}${dd}${hh}${min}${ss}`;
+  const parts = formatter.formatToParts(ahora);
+  const get = (type) => parts.find(p => p.type === type).value;
+
+  return `${get("year")}${get("month")}${get("day")}${get("hour")}${get("minute")}${get("second")}`;
 }
 
 /* 🔹 GENERAR STRING ALEATORIO */
