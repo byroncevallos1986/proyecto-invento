@@ -174,6 +174,7 @@ email,
 permisos:"operador",
 enabled:true,
 fechaCreacion:fechaActual,
+fechaUltimoLogin: null,
 fechaActualizacion:fechaActual,
 fechaInactivacion: null,
 
