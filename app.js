@@ -165,7 +165,7 @@ if(num > max) max = num;
 });
 
 const nuevoId = "user" + String(max + 1).padStart(4,"0");
-const fechaActual = new Date();
+const fechaActual = obtenerTimestampEcuador();
 
 await setDoc(doc(db,"whitelist",nuevoId),{
 nombres,
@@ -175,6 +175,10 @@ permisos:"operador",
 enabled:true,
 fechaCreacion:fechaActual,
 fechaActualizacion:fechaActual,
+
+/* 🔥 NUEVO CAMPO */
+fechaUltimoLogin: fechaActual,
+
 fechaInactivacion: null,
 
 /* 🔥 CAMPOS ANONIMIZACION */
@@ -303,7 +307,7 @@ if (datosAntes.enabled === false && datosDespues.enabled === true) {
 
 await updateDoc(doc(db,"whitelist",editId.value),{
 ...datosDespues,
-fechaActualizacion: new Date(),
+fechaActualizacion: obtenerTimestampEcuador(),
 fechaInactivacion: fechaInactivacionValor
 });
 
@@ -371,10 +375,16 @@ const querySnapshot = await getDocs(q);
 
 if(!querySnapshot.empty){
 
-const userData = querySnapshot.docs[0].data();
+const userDoc = querySnapshot.docs[0];
+const userData = userDoc.data();
+
+/* 🔥 ACTUALIZAR ÚLTIMO LOGIN */
+await updateDoc(doc(db,"whitelist",userDoc.id),{
+fechaUltimoLogin: obtenerTimestampEcuador()
+});
 
 usuarioActual = {
-uid: querySnapshot.docs[0].id,
+uid: userDoc.id,
 email: user.email,
 permisos: userData.permisos
 };
