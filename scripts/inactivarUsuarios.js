@@ -10,13 +10,9 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-/* 🔥 FUNCIÓN FECHA ECUADOR */
-function obtenerFechaEcuador() {
-  return new Date(
-    new Date().toLocaleString("en-US", {
-      timeZone: "America/Guayaquil"
-    })
-  );
+/* 🔥 FECHA ACTUAL */
+function obtenerFechaActual() {
+  return new Date();
 }
 
 /* 🔥 FORMATO ID AUDIT LOG
@@ -24,7 +20,7 @@ function obtenerFechaEcuador() {
    20260505173024_CQ9o9fZS
 */
 function generarAuditLogId() {
-  const fecha = obtenerFechaEcuador();
+  const fecha = obtenerFechaActual();
 
   const yyyy = fecha.getFullYear();
   const MM = String(fecha.getMonth() + 1).padStart(2, "0");
@@ -47,10 +43,10 @@ async function inactivarUsuarios() {
     console.log("INICIO PROCESO INACTIVACIÓN AUTOMÁTICA");
     console.log("========================================");
 
-    /* 🕒 Fecha y hora Ecuador */
-    const fechaActual = obtenerFechaEcuador();
+    /* 🕒 Fecha y hora actual */
+    const fechaActual = obtenerFechaActual();
 
-    console.log("Fecha actual Ecuador:", fechaActual);
+    console.log("Fecha actual:", fechaActual);
 
     /* 🔍 Obtener usuarios habilitados */
     const snapshot = await db
@@ -95,7 +91,6 @@ async function inactivarUsuarios() {
         await db.collection("whitelist").doc(doc.id).update({
           enabled: false,
 
-          /* 🕒 Timestamp Ecuador */
           fechaInactivacion: admin.firestore.Timestamp.fromDate(
             fechaActual
           ),
