@@ -1,4 +1,7 @@
 module.exports = {
+  /*Si un usuario creado no se loguea por más de 30 días seguidos, se inactiva automáticamente*/
+  DIAS_INACTIVO: 30,
+
   /*Luego de inactivar de forma manual (front end) un usuario, deben pasar 40 días seguidos 
   para ser anonimizado de forma automática*/
   DIAS_ANOM: 40,
