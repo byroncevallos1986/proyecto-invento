@@ -73,6 +73,11 @@ async function inactivarUsuarios() {
         /* 🔒 Deshabilitar usuario */
         await db.collection("whitelist").doc(doc.id).update({
           enabled: false,
+
+          fechaInactivacion: admin.firestore.Timestamp.fromDate(
+            fechaActual
+          ),
+
           fechaActualizacion: admin.firestore.Timestamp.fromDate(
             fechaActual
           )
