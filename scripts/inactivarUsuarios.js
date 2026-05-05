@@ -17,18 +17,37 @@ function obtenerFechaActual() {
 
 /* 🔥 FORMATO ID AUDIT LOG
    Ejemplo:
-   20260505173024_CQ9o9fZS
+   20260505180746_wcdf9scq
 */
 function generarAuditLogId() {
-  const fecha = obtenerFechaActual();
+  /* 🕒 Obtener fecha Ecuador */
+  const fechaEcuador = new Date(
+    new Date().toLocaleString("en-US", {
+      timeZone: "America/Guayaquil"
+    })
+  );
 
-  const yyyy = fecha.getFullYear();
-  const MM = String(fecha.getMonth() + 1).padStart(2, "0");
-  const dd = String(fecha.getDate()).padStart(2, "0");
+  const yyyy = fechaEcuador.getFullYear();
 
-  const hh = String(fecha.getHours()).padStart(2, "0");
-  const mm = String(fecha.getMinutes()).padStart(2, "0");
-  const ss = String(fecha.getSeconds()).padStart(2, "0");
+  const MM = String(
+    fechaEcuador.getMonth() + 1
+  ).padStart(2, "0");
+
+  const dd = String(
+    fechaEcuador.getDate()
+  ).padStart(2, "0");
+
+  const hh = String(
+    fechaEcuador.getHours()
+  ).padStart(2, "0");
+
+  const mm = String(
+    fechaEcuador.getMinutes()
+  ).padStart(2, "0");
+
+  const ss = String(
+    fechaEcuador.getSeconds()
+  ).padStart(2, "0");
 
   const random = Math.random()
     .toString(36)
@@ -119,9 +138,11 @@ async function inactivarUsuarios() {
 
             despues: {
               enabled: false,
-              fechaInactivacion: admin.firestore.Timestamp.fromDate(
-                fechaActual
-              )
+
+              fechaInactivacion:
+                admin.firestore.Timestamp.fromDate(
+                  fechaActual
+                )
             }
           },
 
@@ -137,7 +158,9 @@ async function inactivarUsuarios() {
           )
         });
 
-        console.log(`Usuario ${data.email} inactivado correctamente`);
+        console.log(
+          `Usuario ${data.email} inactivado correctamente`
+        );
       }
     }
 
