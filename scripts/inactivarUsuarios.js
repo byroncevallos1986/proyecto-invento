@@ -12,13 +12,33 @@ const db = admin.firestore();
 
 /* 🔥 FUNCIÓN FECHA ECUADOR */
 function obtenerFechaEcuador() {
-  const ahora = new Date();
-
   return new Date(
-    ahora.toLocaleString("en-US", {
+    new Date().toLocaleString("en-US", {
       timeZone: "America/Guayaquil"
     })
   );
+}
+
+/* 🔥 FORMATO ID AUDIT LOG
+   Ejemplo:
+   20260505173024_CQ9o9fZS
+*/
+function generarAuditLogId() {
+  const fecha = obtenerFechaEcuador();
+
+  const yyyy = fecha.getFullYear();
+  const MM = String(fecha.getMonth() + 1).padStart(2, "0");
+  const dd = String(fecha.getDate()).padStart(2, "0");
+
+  const hh = String(fecha.getHours()).padStart(2, "0");
+  const mm = String(fecha.getMinutes()).padStart(2, "0");
+  const ss = String(fecha.getSeconds()).padStart(2, "0");
+
+  const random = Math.random()
+    .toString(36)
+    .substring(2, 10);
+
+  return `${yyyy}${MM}${dd}${hh}${mm}${ss}_${random}`;
 }
 
 async function inactivarUsuarios() {
@@ -85,14 +105,41 @@ async function inactivarUsuarios() {
           )
         });
 
-        /* 📝 Registrar auditlog */
-        const auditId = `audit_${Date.now()}_${doc.id}`;
+        /* 📝 Registrar audit log */
+        const auditId = generarAuditLogId();
 
-        await db.collection("auditlogs").doc(auditId).set({
+        await db.collection("audit_logs").doc(auditId).set({
           accion: "AUTO_DISABLE_USER",
-          usuario: data.email,
+
+          actor: {
+            email: "github-actions@system.local",
+            permisos: "system",
+            uid: "github-actions"
+          },
+
+          cambios: {
+            antes: {
+              enabled: true
+            },
+
+            despues: {
+              enabled: false,
+              fechaInactivacion: admin.firestore.Timestamp.fromDate(
+                fechaActual
+              )
+            }
+          },
+
           detalle: `Usuario inactivado automáticamente después de ${DIAS_INACTIVO} días sin login`,
-          fecha: admin.firestore.Timestamp.fromDate(fechaActual)
+
+          usuarioObjetivo: {
+            email: data.email,
+            uid: data.uid || doc.id
+          },
+
+          fecha: admin.firestore.Timestamp.fromDate(
+            fechaActual
+          )
         });
 
         console.log(`Usuario ${data.email} inactivado correctamente`);
