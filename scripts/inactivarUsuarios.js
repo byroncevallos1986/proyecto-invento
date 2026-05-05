@@ -27,6 +27,7 @@ async function inactivarUsuarios() {
     console.log("INICIO PROCESO INACTIVACIÓN AUTOMÁTICA");
     console.log("========================================");
 
+    /* 🕒 Fecha y hora Ecuador */
     const fechaActual = obtenerFechaEcuador();
 
     console.log("Fecha actual Ecuador:", fechaActual);
@@ -74,6 +75,7 @@ async function inactivarUsuarios() {
         await db.collection("whitelist").doc(doc.id).update({
           enabled: false,
 
+          /* 🕒 Timestamp Ecuador */
           fechaInactivacion: admin.firestore.Timestamp.fromDate(
             fechaActual
           ),
