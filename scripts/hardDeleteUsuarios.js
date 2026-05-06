@@ -292,7 +292,8 @@ CASOS:
      → eliminar definitivamente.
 
    - Si fechaCreacion != fechaUltimoLogin
-     → ejecutar Workflow
+     → actualizar fechaInactivacion
+       y ejecutar Workflow
        Anonimizar Usuarios.
 =====================================
 */
@@ -458,8 +459,36 @@ async function hardDeleteUsuarios() {
           );
 
           console.log(
+            "Actualizando fechaInactivacion"
+          );
+
+          // =========================================
+          // ACTUALIZAR FECHA INACTIVACIÓN
+          // =========================================
+
+          const fechaInactivacion =
+            admin.firestore.Timestamp.fromDate(
+              obtenerFechaEcuador()
+            );
+
+          await db
+            .collection("whitelist")
+            .doc(doc.id)
+            .update({
+              fechaInactivacion
+            });
+
+          console.log(
+            "fechaInactivacion actualizada correctamente"
+          );
+
+          console.log(
             "Se ejecutará Workflow Anonimizar Usuarios"
           );
+
+          // =========================================
+          // EJECUTAR WORKFLOW
+          // =========================================
 
           await ejecutarWorkflowAnonimizacion(doc.id);
         }
