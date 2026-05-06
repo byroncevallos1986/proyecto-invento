@@ -193,7 +193,7 @@ async function inactivarUsuarios() {
         };
 
         await db.collection("audit_logs").doc(auditId).set({
-          accion: "DISABLE_USER",
+          accion: "AUTOM_DISABLE_USER",
 
           actor: {
             email: "github-actions@system.local",
