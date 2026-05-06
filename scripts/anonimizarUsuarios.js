@@ -1,7 +1,9 @@
 const admin = require("firebase-admin");
 const { DIAS_ANOM } = require("../config/lifecycleConfig");
 
-const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+const serviceAccount = JSON.parse(
+  process.env.FIREBASE_SERVICE_ACCOUNT
+);
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount)
@@ -9,56 +11,87 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-/* 🔥 FECHA ECUADOR (FORMATO IGUAL QUE app.js) */
+/*
+=====================================
+🔥 FECHA ECUADOR
+=====================================
+Formato igual utilizado en app.js
+=====================================
+*/
 function obtenerFechaEcuador() {
+
   const ahora = new Date();
 
-  const formatter = new Intl.DateTimeFormat("sv-SE", {
-    timeZone: "America/Guayaquil",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false
-  });
+  const formatter = new Intl.DateTimeFormat(
+    "sv-SE",
+    {
+      timeZone: "America/Guayaquil",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }
+  );
 
   const parts = formatter.formatToParts(ahora);
-  const get = (type) => parts.find(p => p.type === type).value;
+
+  const get = (type) =>
+    parts.find(p => p.type === type).value;
 
   return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}:${get("second")}-05:00`;
 }
 
-/* 🔹 GENERAR TIMESTAMP ECUADOR (yyyymmddhhmmss) */
+/*
+=====================================
+🔥 GENERAR TIMESTAMP
+=====================================
+Formato:
+yyyymmddhhmmss
+=====================================
+*/
 function generarTimestamp() {
 
   const ahora = new Date();
 
-  const formatter = new Intl.DateTimeFormat("sv-SE", {
-    timeZone: "America/Guayaquil",
-    year: "numeric",
-    month: "2-digit",
-    day: "2-digit",
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: false
-  });
+  const formatter = new Intl.DateTimeFormat(
+    "sv-SE",
+    {
+      timeZone: "America/Guayaquil",
+      year: "numeric",
+      month: "2-digit",
+      day: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }
+  );
 
   const parts = formatter.formatToParts(ahora);
-  const get = (type) => parts.find(p => p.type === type).value;
+
+  const get = (type) =>
+    parts.find(p => p.type === type).value;
 
   return `${get("year")}${get("month")}${get("day")}${get("hour")}${get("minute")}${get("second")}`;
 }
 
-/* 🔹 GENERAR STRING ALEATORIO */
+/*
+=====================================
+🔥 GENERAR STRING ALEATORIO
+=====================================
+*/
 function generarRandom(length = 8) {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
   let result = "";
 
   for (let i = 0; i < length; i++) {
+
     result += chars.charAt(
       Math.floor(Math.random() * chars.length)
     );
@@ -67,86 +100,232 @@ function generarRandom(length = 8) {
   return result;
 }
 
+/*
+=====================================
+🔥 ANONIMIZAR USUARIOS
+=====================================
+
+CASOS:
+
+1. Usuarios inactivos
+2. Usuarios enviados desde
+   hardDeleteUsuarios.js
+3. Usuarios con más de DIAS_ANOM
+
+=====================================
+*/
 async function anonimizarUsuarios() {
 
   try {
 
     console.log("Iniciando anonimización...");
 
-    const snapshot = await db
-      .collection("whitelist")
-      .where("enabled", "==", false)
-      .where("anonimizado", "==", false)
-      .get();
+    /*
+    =====================================
+    🔥 USUARIO RECIBIDO DESDE WORKFLOW
+    =====================================
+    */
+    const usuarioId = process.env.USUARIO_ID;
+
+    let snapshot = null;
+
+    /*
+    =====================================
+    🔥 SI VIENE USUARIO ESPECÍFICO
+    =====================================
+    */
+    if (usuarioId) {
+
+      console.log(
+        `Buscando usuario específico: ${usuarioId}`
+      );
+
+      const doc = await db
+        .collection("whitelist")
+        .doc(usuarioId)
+        .get();
+
+      if (!doc.exists) {
+
+        console.log(
+          `Usuario no encontrado: ${usuarioId}`
+        );
+
+        return;
+      }
+
+      snapshot = {
+        docs: [doc]
+      };
+
+    } else {
+
+      /*
+      =====================================
+      🔥 PROCESO AUTOMÁTICO GENERAL
+      =====================================
+      */
+
+      snapshot = await db
+        .collection("whitelist")
+        .where("anonimizado", "==", false)
+        .get();
+    }
 
     const ahora = new Date();
+
+    /*
+    =====================================
+    🔥 RECORRER USUARIOS
+    =====================================
+    */
 
     for (const docu of snapshot.docs) {
 
       const data = docu.data();
 
+      /*
+      =====================================
+      🔥 VALIDAR FECHA INACTIVACIÓN
+      =====================================
+      */
+
       if (!data.fechaInactivacion) {
-        console.log(`Usuario ${docu.id} sin fechaInactivacion`);
-        continue;
+
+        console.log(
+          `Usuario ${docu.id} sin fechaInactivacion`
+        );
+
+        /*
+        Si viene desde workflow,
+        continuar igualmente.
+        */
+        if (!usuarioId) {
+          continue;
+        }
       }
 
-      /* 🔥 SOPORTE STRING Y TIMESTAMP */
+      /*
+      =====================================
+      🔥 SOPORTE STRING Y TIMESTAMP
+      =====================================
+      */
+
       let fechaInactiva = null;
 
       if (
         data.fechaInactivacion &&
-        typeof data.fechaInactivacion.toDate === "function"
+        typeof data.fechaInactivacion.toDate ===
+          "function"
       ) {
 
-        /* Timestamp Firestore */
-        fechaInactiva = data.fechaInactivacion.toDate();
+        fechaInactiva =
+          data.fechaInactivacion.toDate();
 
-      } else {
+      } else if (data.fechaInactivacion) {
 
-        /* String antiguo */
-        fechaInactiva = new Date(data.fechaInactivacion);
+        fechaInactiva =
+          new Date(data.fechaInactivacion);
       }
 
-      const diferenciaDias =
-        (ahora - fechaInactiva) / (1000 * 60 * 60 * 24);
+      /*
+      =====================================
+      🔥 CALCULAR DIFERENCIA DÍAS
+      =====================================
+      */
+
+      let diferenciaDias = DIAS_ANOM;
+
+      if (fechaInactiva) {
+
+        diferenciaDias =
+          (ahora - fechaInactiva) /
+          (1000 * 60 * 60 * 24);
+      }
 
       console.log(`Usuario: ${docu.id}`);
-      console.log(`Fecha Inactivación: ${fechaInactiva}`);
-      console.log(`Diferencia días: ${diferenciaDias}`);
 
-      if (diferenciaDias >= DIAS_ANOM) {
+      console.log(
+        `Fecha Inactivación: ${fechaInactiva}`
+      );
 
-        console.log(`Anonimizando usuario: ${docu.id}`);
+      console.log(
+        `Diferencia días: ${diferenciaDias}`
+      );
 
-        /* 🔥 DATOS ANTES */
+      /*
+      =====================================
+      🔥 VALIDAR DÍAS
+      =====================================
+      */
+
+      if (
+        diferenciaDias >= DIAS_ANOM ||
+        usuarioId
+      ) {
+
+        console.log(
+          `Anonimizando usuario: ${docu.id}`
+        );
+
+        /*
+        =====================================
+        🔥 DATOS ANTES
+        =====================================
+        */
+
         const datosAntes = { ...data };
 
-        /* 🔥 FECHA ANONIMIZACION TIMESTAMP */
+        /*
+        =====================================
+        🔥 FECHA ANONIMIZACIÓN
+        =====================================
+        */
+
         const fechaAnonimizacionTimestamp =
           admin.firestore.Timestamp.now();
 
-        /* 🔥 DATOS DESPUÉS */
+        /*
+        =====================================
+        🔥 DATOS DESPUÉS
+        =====================================
+        */
+
         const datosDespues = {
           ...data,
           anonimizado: true,
-          fechaAnonimizacion: fechaAnonimizacionTimestamp,
+          fechaAnonimizacion:
+            fechaAnonimizacionTimestamp,
           nombres: "ANONIMIZADO",
           apellidos: "ANONIMIZADO",
           email: null
         };
 
-        /* 🔥 UPDATE USUARIO */
+        /*
+        =====================================
+        🔥 UPDATE USUARIO
+        =====================================
+        */
+
         await docu.ref.update({
           anonimizado: true,
-          fechaAnonimizacion: fechaAnonimizacionTimestamp,
+          fechaAnonimizacion:
+            fechaAnonimizacionTimestamp,
           nombres: "ANONIMIZADO",
           apellidos: "ANONIMIZADO",
           email: null
         });
 
-        console.log(`Usuario anonimizado: ${docu.id}`);
+        console.log(
+          `Usuario anonimizado: ${docu.id}`
+        );
 
-        /* 🔥 AUDIT LOG (CON ID PERSONALIZADO) */
+        /*
+        =====================================
+        🔥 AUDIT LOG
+        =====================================
+        */
+
         const docId =
           `${generarTimestamp()}_${generarRandom(8)}`;
 
@@ -155,7 +334,8 @@ async function anonimizarUsuarios() {
           .doc(docId)
           .set({
 
-            timestamp: obtenerFechaEcuador(),
+            timestamp:
+              obtenerFechaEcuador(),
 
             accion: "ANONYMIZE_USER",
 
@@ -189,7 +369,12 @@ async function anonimizarUsuarios() {
 
     console.error("Error:", error);
 
-    /* 🔥 AUDIT LOG ERROR (CON ID PERSONALIZADO) */
+    /*
+    =====================================
+    🔥 AUDIT LOG ERROR
+    =====================================
+    */
+
     const docId =
       `${generarTimestamp()}_${generarRandom(8)}`;
 
@@ -198,13 +383,15 @@ async function anonimizarUsuarios() {
       .doc(docId)
       .set({
 
-        timestamp: obtenerFechaEcuador(),
+        timestamp:
+          obtenerFechaEcuador(),
 
         accion: "ANONYMIZE_USER",
 
         modulo: "Administracion",
 
-        descripcion: "Error en anonimización automática",
+        descripcion:
+          "Error en anonimización automática",
 
         actor: "SYSTEM",
 
