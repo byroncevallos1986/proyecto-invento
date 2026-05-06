@@ -30,7 +30,13 @@ jobs:
       - name: Instalar dependencias
         run: npm install firebase-admin
 
+      - name: Mostrar usuario recibido
+        run: |
+          echo "Usuario recibido:"
+          echo "${{ github.event.inputs.usuarioId }}"
+
       - name: Ejecutar script
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          USUARIO_ID: ${{ github.event.inputs.usuarioId }}
         run: node scripts/anonimizarUsuarios.js
