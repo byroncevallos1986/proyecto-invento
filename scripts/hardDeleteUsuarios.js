@@ -90,7 +90,7 @@ async function ejecutarWorkflowAnonimizacion(usuarioId) {
 
     const GITHUB_TOKEN = process.env.GHP_TOKEN;
 
-    const GITHUB_OWNER = process.env.GHP_OWEN;
+    const GITHUB_OWNER = process.env.GHP_OWNER;
 
     const GITHUB_REPO = process.env.GHP_REPO;
 
