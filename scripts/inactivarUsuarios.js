@@ -15,6 +15,32 @@ function obtenerFechaActual() {
   return new Date();
 }
 
+/* 🔥 FORMATO TIMESTAMP ECUADOR STRING
+   Ejemplo:
+   2026-05-06T14:36:43-05:00
+*/
+function obtenerFechaEcuador() {
+  const ahora = new Date();
+
+  const formatter = new Intl.DateTimeFormat("sv-SE", {
+    timeZone: "America/Guayaquil",
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: false
+  });
+
+  const parts = formatter.formatToParts(ahora);
+
+  const get = (type) =>
+    parts.find((p) => p.type === type).value;
+
+  return `${get("year")}-${get("month")}-${get("day")}T${get("hour")}:${get("minute")}:${get("second")}-05:00`;
+}
+
 /* 🔥 FORMATO ID AUDIT LOG
    Ejemplo:
    20260505180746_wcdf9scq
@@ -106,24 +132,68 @@ async function inactivarUsuarios() {
       if (diferenciaDias >= DIAS_INACTIVO) {
         console.log(`Inactivando usuario ${data.email}`);
 
+        const fechaInactivacion =
+          admin.firestore.Timestamp.fromDate(fechaActual);
+
         /* 🔒 Deshabilitar usuario */
         await db.collection("whitelist").doc(doc.id).update({
           enabled: false,
 
-          fechaInactivacion: admin.firestore.Timestamp.fromDate(
-            fechaActual
-          ),
+          fechaInactivacion: fechaInactivacion,
 
-          fechaActualizacion: admin.firestore.Timestamp.fromDate(
-            fechaActual
-          )
+          fechaActualizacion:
+            admin.firestore.Timestamp.fromDate(fechaActual)
         });
 
         /* 📝 Registrar audit log */
         const auditId = generarAuditLogId();
 
+        /* 🔥 DATOS ANTES */
+        const datosAntes = {
+          anonimizado: data.anonimizado || false,
+          apellidos: data.apellidos || "",
+          eliminado: data.eliminado || false,
+          email: data.email || "",
+          enabled: true,
+          fechaActualizacion:
+            data.fechaActualizacion || null,
+          fechaAnonimizacion:
+            data.fechaAnonimizacion || null,
+          fechaCreacion:
+            data.fechaCreacion || null,
+          fechaEliminacion:
+            data.fechaEliminacion || null,
+          fechaInactivacion:
+            data.fechaInactivacion || null,
+          fechaUltimoLogin:
+            data.fechaUltimoLogin || null,
+          nombres: data.nombres || "",
+          permisos: data.permisos || "operador"
+        };
+
+        /* 🔥 DATOS DESPUÉS */
+        const datosDespues = {
+          anonimizado: data.anonimizado || false,
+          apellidos: data.apellidos || "",
+          eliminado: data.eliminado || false,
+          email: data.email || "",
+          enabled: false,
+          fechaActualizacion: fechaInactivacion,
+          fechaAnonimizacion:
+            data.fechaAnonimizacion || null,
+          fechaCreacion:
+            data.fechaCreacion || null,
+          fechaEliminacion:
+            data.fechaEliminacion || null,
+          fechaInactivacion: fechaInactivacion,
+          fechaUltimoLogin:
+            data.fechaUltimoLogin || null,
+          nombres: data.nombres || "",
+          permisos: data.permisos || "operador"
+        };
+
         await db.collection("audit_logs").doc(auditId).set({
-          accion: "AUTO_DISABLE_USER",
+          accion: "DISABLE_USER",
 
           actor: {
             email: "github-actions@system.local",
@@ -132,30 +202,25 @@ async function inactivarUsuarios() {
           },
 
           cambios: {
-            antes: {
-              enabled: true
-            },
-
-            despues: {
-              enabled: false,
-
-              fechaInactivacion:
-                admin.firestore.Timestamp.fromDate(
-                  fechaActual
-                )
-            }
+            antes: datosAntes,
+            despues: datosDespues
           },
 
-          detalle: `Usuario inactivado automáticamente después de ${DIAS_INACTIVO} días sin login`,
+          descripcion: "Desactivación de usuario",
 
-          usuarioObjetivo: {
+          modulo: "Administracion",
+
+          origenCambio: "automatico",
+
+          recurso: {
             email: data.email,
-            uid: data.uid || doc.id
+            id: data.uid || doc.id,
+            tipo: "usuario"
           },
 
-          fecha: admin.firestore.Timestamp.fromDate(
-            fechaActual
-          )
+          resultado: "SUCCESS",
+
+          timestamp: obtenerFechaEcuador()
         });
 
         console.log(
