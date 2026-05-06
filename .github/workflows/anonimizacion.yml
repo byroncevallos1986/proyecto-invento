@@ -5,6 +5,11 @@ on:
     - cron: '0 6 * * *' # 01:00 AM Ecuador
 
   workflow_dispatch:
+    inputs:
+      usuarioId:
+        description: 'ID del usuario a anonimizar'
+        required: false
+        type: string
 
 env:
   FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
